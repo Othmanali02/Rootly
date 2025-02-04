@@ -39,19 +39,19 @@ export default {
         intuitive and collaborative forms provided by Rootly.
       </p>
       <div class="flex flex-col sm:flex-row justify-center gap-4 mt-4 mainBtns">
-        <button class="w-full sm:w-auto px-6 py-2 text-white rounded-lg transition">
+        <a href="/create" class="w-full sm:w-auto px-6 py-2 text-white rounded-lg transition">
           Browse Ontologies
-        </button>
-        <button class="w-full sm:w-auto px-6 py-2 text-white rounded-lg transition">
-          Create an Ontology
-        </button>
+        </a>
+        <a href="/ontologies/upload" class="w-full sm:w-auto px-6 py-2 text-white rounded-lg transition">
+          Organize your Data
+        </a>
       </div>
     </div>
+
   </div>
 </template>
 
 
 
 
-<style scoped>
-</style>
+<style scoped></style>

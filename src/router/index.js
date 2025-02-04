@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '../components/HomePage.vue';
 import OntologyUpload from '@/components/OntologyUpload.vue';
+import OntologyCreation from '@/components/OntologyCreation.vue';
 
 
 const router = createRouter({
@@ -17,9 +18,9 @@ const router = createRouter({
 			component: OntologyUpload,
 		},
 		{
-			path: "/",
-			name: "Home",
-			component: HomePage,
+			path: "/create",
+			name: "OntologyCreation",
+			component: OntologyCreation,
 		}
 	],
 });
