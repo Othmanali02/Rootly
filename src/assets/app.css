@@ -1,0 +1,36 @@
+/* src/assets/tailwind.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+nav {
+ 
+    background-color: #EAEAEA;
+}
+
+.navItems{
+    margin-right: auto;
+    margin-left: auto;
+}
+
+nav hr{
+    width: 30%;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid #384e1d;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.poweredBy img{
+    width: 350px;
+}
+
+.mainBtns button{
+    background-color: #384e1d;
+}
+
+footer{
+    background-color: #384e1d;
+}
