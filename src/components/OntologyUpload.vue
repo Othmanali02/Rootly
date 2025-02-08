@@ -30,7 +30,7 @@ const uploadFile = async () => {
     console.log(response.data);
   } catch (error) {
     console.error('Upload failed:', error);
-    toast.success("Incorrect File Type", {
+    toast.error("Incorrect File Type", {
      timeout: 4000
     });
 

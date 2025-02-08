@@ -17,7 +17,7 @@ export default {
         <a href="/info" class="text-black hover:text-gray-400 text-lg">
           <img class="h-8" src="../assets/info.png" alt=" " />
         </a>
-        <a href="/github" class="text-black hover:text-gray-400 text-lg">
+        <a href="https://github.com/Othmanali02/Rootly" class="text-black hover:text-gray-400 text-lg">
           <img class="h-8" src="../assets/github.png" alt=" " />
         </a>
       </div>
