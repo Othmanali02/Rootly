@@ -39,11 +39,8 @@ export default {
         intuitive and collaborative forms provided by Rootly.
       </p>
       <div class="flex flex-col sm:flex-row justify-center gap-4 mt-4 mainBtns">
-        <a href="/create" class="w-full sm:w-auto px-6 py-2 text-white rounded-lg transition">
-          Browse Ontologies
-        </a>
-        <a href="/ontologies/upload" class="w-full sm:w-auto px-6 py-2 text-white rounded-lg transition">
-          Organize your Data
+        <a href="/dashboard" class="w-full text-center font-bold text-lg px-6 py-2 text-white rounded-lg transition">
+          Create a new list
         </a>
       </div>
     </div>
