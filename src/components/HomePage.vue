@@ -1,10 +1,27 @@
 <script setup>
+import axios from 'axios';
 </script>
 
 <script>
 
 export default {
   name: 'HomePage',
+  methods: {
+    mounted() {
+      console.log("localStorage");
+    },
+    async handleLogin() {
+      try {
+        const response = axios.get("http://localhost:3000/login");
+        console.log(response.data);
+
+      } catch (error) {
+        console.log(error);
+
+      }
+
+    }
+  }
 }
 </script>
 
@@ -38,11 +55,21 @@ export default {
         your research project or you can start creating your own ontology using the
         intuitive and collaborative forms provided by Rootly.
       </p>
+
+
       <div class="flex flex-col sm:flex-row justify-center gap-4 mt-4 mainBtns">
-        <a href="/dashboard" class="w-full text-center font-bold text-lg px-6 py-2 text-white rounded-lg transition">
-          Create a new list
+        <a href="http://localhost:3000/login"
+          class="w-full bg-[#384e1d] text-center font-bold text-lg px-6 py-2 text-white rounded-lg transition">
+          Login
         </a>
       </div>
+
+      <div class="flex flex-col sm:flex-row justify-center gap-4 mt-4 mainBtns">
+        <a href="/dashboard" class="w-full text-center font-bold text-lg px-6 py-2 text-white rounded-lg transition">
+          Dashboard
+        </a>
+      </div>
+
     </div>
 
   </div>
