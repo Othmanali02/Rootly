@@ -3,25 +3,27 @@ import axios from 'axios';
 </script>
 
 <script>
-
 export default {
+  props: ['user'],
   data() {
     return {
       lists: [],
       searchQuery: '',
+      loadingScreen: false,
 
     };
   },
   async mounted() {
     try {
-      console.log("Mounted");
-
       // should send the users credentials with the request so that the backend gets
       // only that users lists and shared lists
-
-      const response = await axios.get(`http://localhost:3000/getLists`);
-      this.lists = response.data.results;
-      console.log(this.lists);
+      this.loadingScreen = true;
+      const response = await axios.post(`http://localhost:3000/getUserLists`, {
+        email: this.$props.user.email
+      });
+      console.log(response);
+      this.lists = response.data;
+      this.loadingScreen = false;
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -50,8 +52,10 @@ export default {
     <div class="w-full my-6 max-w-2xl text-center dashItems">
       <div class="text-center">
         <h1 class="text-xl font-bold text-center my-2">Dashboard</h1>
-        <h2 class="text-lg font-semibold text-center">Signed in as, Othman</h2>
-        <a href="/login" class="text-blue-600 hover:underline ">Don't have an account? Sign in here</a>
+        <h2 v-if="this.$props.user" class="text-lg font-semibold text-center">Signed in as, {{ this.$props.user.name }}
+        </h2>
+
+        <a v-else href="/api/login" class="text-blue-600 hover:underline ">Don't have an account? Sign in here</a>
       </div>
 
       <h1 class="text-xl font-bold text-left my-4">My lists</h1>
@@ -70,19 +74,27 @@ export default {
           </a>
         </div>
 
-        <div v-if="filteredLists.length > 0">
-          <ul class="space-y-1">
-            <li v-for="(item, index) in filteredLists" :key="index"
-              class="flex items-left text-left font-semibold bg-white text-gray-800 border border-gray-300 px-6 py-2 rounded-lg shadow-sm hover:bg-gray-100 hover:border-gray-400 transition-all duration-300">
-              <a :href="genLink(item)" target="_blank" class="w-full">
-                {{ item.Name }}
-              </a>
-            </li>
-          </ul>
+        <div v-if="this.loadingScreen">
+          <img src="../assets/rootlygif.gif" class="h-32 mx-auto" />
+
         </div>
-        <div v-else class="text-center text-gray-600">
-          <p>No lists found.</p>
+
+        <div v-else>
+          <div v-if="filteredLists.length > 0">
+            <ul class="space-y-1">
+              <li v-for="(item, index) in filteredLists" :key="index"
+                class="flex items-left text-left font-semibold bg-white text-gray-800 border border-gray-300 px-6 py-2 rounded-lg shadow-sm hover:bg-gray-100 hover:border-gray-400 transition-all duration-300">
+                <a :href="genLink(item)" class="w-full">
+                  {{ item.Name }}
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div v-else class="text-center text-gray-600">
+            <p>No lists found.</p>
+          </div>
         </div>
+
       </div>
 
 

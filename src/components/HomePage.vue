@@ -6,9 +6,12 @@ import axios from 'axios';
 
 export default {
   name: 'HomePage',
+  props: ['user'],
   methods: {
-    mounted() {
-      console.log("localStorage");
+    async mounted() {
+      if(this.$props.user === null){
+        console.log("user does not exist")
+      }
     },
     async handleLogin() {
       try {
@@ -57,18 +60,35 @@ export default {
       </p>
 
 
-      <div class="flex flex-col sm:flex-row justify-center gap-4 mt-4 mainBtns">
-        <a href="http://localhost:3000/login"
-          class="w-full bg-[#384e1d] text-center font-bold text-lg px-6 py-2 text-white rounded-lg transition">
-          Login
-        </a>
+      <div v-if="this.$props.user">
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mt-4 mainBtns">
+          <a href="/dashboard" class="w-full text-center font-bold text-lg px-6 py-2 text-white rounded-lg transition">
+            Dashboard
+          </a>
+        </div>
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mt-4">
+          <a href="/api/logout"
+            class="w-full bg-red-500 text-center font-bold text-lg px-6 py-2 text-white rounded-lg transition">
+            Logout
+          </a>
+        </div>
       </div>
 
-      <div class="flex flex-col sm:flex-row justify-center gap-4 mt-4 mainBtns">
-        <a href="/dashboard" class="w-full text-center font-bold text-lg px-6 py-2 text-white rounded-lg transition">
-          Dashboard
-        </a>
+
+      <div v-else>
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mt-4 mainBtns">
+          <a href="http://localhost:3000/login"
+            class="w-full bg-[#384e1d] text-center font-bold text-lg px-6 py-2 text-white rounded-lg transition">
+            Login
+          </a>
+        </div>
       </div>
+
+
+
+
+
+
 
     </div>
 

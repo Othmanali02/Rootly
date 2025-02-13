@@ -4,6 +4,7 @@ import axios from 'axios';
 
 <script>
 export default {
+    props: ['user', 'listId'],
     data() {
         return {
             listInformation: [],
@@ -17,6 +18,7 @@ export default {
     async mounted() {
         try {
             this.loading = true;
+            console.log(this.$props.user.email);
             const response = await axios.post(`http://localhost:3000/getListInfo`, {
                 listId: this.listId
             });
@@ -38,17 +40,16 @@ export default {
             this.isModalOpen = false;
             this.selectedItem = null;
         },
-        checkIfScaleExists(selectedItem){
+        checkIfScaleExists(selectedItem) {
             let details = selectedItem.scale;
-            if (details === undefined){
+            if (details === undefined) {
                 return false;
-            }else{
+            } else {
                 return true;
             }
         }
     },
     name: 'ListView',
-    props: ['listId'],
 };
 </script>
 
@@ -206,7 +207,7 @@ export default {
 
                             </div>
                         </div>
-   
+
                         <div v-if="checkIfScaleExists(selectedItem)">
                             <h4 class="bg-gray-200 rounded-lg px-2 py-2 text-black text-center">Scale</h4>
                             <div class="flex border rounded my-2 w-full">
@@ -233,7 +234,7 @@ export default {
                                     {{ selectedItem.scale.categories }}
                                 </div>
                             </div>
-                            
+
 
                         </div>
 

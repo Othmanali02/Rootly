@@ -10,6 +10,9 @@ const items = ref([]);
 const toast = useToast();
 
 export default {
+  props(){
+    ["user"]
+  },
   data() {
     return {
       selectedOntology: [],
@@ -27,6 +30,7 @@ export default {
   },
   async mounted() {
     try {
+      console.log(this.$props.user.UUID);
       const response = await axios.get('http://127.0.0.1:5900/brapi/v2/ontologies?pageSize=100');
 
       items.value = response.data.result.data[0];
@@ -99,7 +103,7 @@ export default {
         const response = await axios.post("http://localhost:3000/createList", {
           traits: traits,
           listName: this.listName,
-          username: "Othman"
+          userId: this.$props.user.UUID
         });
         console.log(response.data.result);
 
@@ -231,8 +235,7 @@ export default {
 
     <div class="flex flex-col items-center justify-center space-y-6">
       <h4 class="text-xl font-semibold text-center">List Name:</h4>
-      <input
-        v-model="listName"
+      <input v-model="listName"
         class="mt-2 px-6 py-3 border border-gray-300 bg-gray-100 text-black font-medium rounded w-96 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
         placeholder="Enter list name" />
       <button @click="createList"
