@@ -56,7 +56,7 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-	if (!user.value) {
+	if (to.path !== "/redirect" && !user.value) {
 		try {
 			const response = await axios.get("/api/user-info", {
 				withCredentials: true,

@@ -7,10 +7,10 @@ import { useToast } from "vue-toastification";
 const file = ref(null);
 
 const uploadFile = async () => {
-    const toast = useToast();
+  const toast = useToast();
 
 
-    
+
   if (!file.value) {
     toast('Please select a file first.');
     return;
@@ -25,16 +25,16 @@ const uploadFile = async () => {
     });
 
     toast.success("File Uploaded Successfully", {
-    timeout: 4000
+      timeout: 4000
     });
     console.log(response.data);
   } catch (error) {
     console.error('Upload failed:', error);
     toast.error("Incorrect File Type", {
-     timeout: 4000
+      timeout: 4000
     });
 
-}
+  }
 };
 </script>
 
@@ -46,16 +46,9 @@ const uploadFile = async () => {
         You can get started with using Rootly by uploading a file for formatting.
       </p>
 
-      <input
-        type="file"
-        @change="(e) => (file = e.target.files[0])"
-        class="mt-4 border p-2 w-full rounded-md"
-      />
+      <input type="file" @change="(e) => (file = e.target.files[0])" class="mt-4 border p-2 w-full rounded-md" />
 
-      <button
-        @click="uploadFile"
-        class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-      >
+      <button @click="uploadFile" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
         Upload File
       </button>
 
@@ -66,5 +59,4 @@ const uploadFile = async () => {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

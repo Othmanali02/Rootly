@@ -1,18 +1,16 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
+import { useToast } from 'vue-toast-notification';
 
 </script>
 
 <script>
-import { useToast } from 'vue-toast-notification';
 const items = ref([]);
 const toast = useToast();
 
 export default {
-  props(){
-    ["user"]
-  },
+  props: ['user'],
   data() {
     return {
       selectedOntology: [],
@@ -30,7 +28,6 @@ export default {
   },
   async mounted() {
     try {
-      console.log(this.$props.user.UUID);
       const response = await axios.get('http://127.0.0.1:5900/brapi/v2/ontologies?pageSize=100');
 
       items.value = response.data.result.data[0];
@@ -105,7 +102,7 @@ export default {
           listName: this.listName,
           userId: this.$props.user.UUID
         });
-        console.log(response.data.result);
+        console.log(response.data);
 
         this.selectedDetails = response.data.result;
         this.fetchTermDetails = false;
@@ -118,13 +115,11 @@ export default {
         this.selectedTraits = [];
         this.selectedVariableDetails = null;
         this.listName = "";
+        let listID = response.data["List ID"];
+
+        window.location.href = "/list/" + listID;
 
 
-        toast.success("List has been created", {
-          timeout: 4000
-        });
-
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch (error) {
         toast.error("Encountered an error, try again.", {
           timeout: 4000

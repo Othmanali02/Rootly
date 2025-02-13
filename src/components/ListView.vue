@@ -1,22 +1,31 @@
 <script setup>
 import axios from 'axios';
+import { useToast } from "vue-toastification";
+
+
 </script>
 
 <script>
+const toast = useToast();
+
 export default {
     props: ['user', 'listId'],
     data() {
         return {
             listInformation: [],
             listName: "",
+            invitedEmail: "",
             loading: false,
             isModalOpen: false,
+            isInviteOpen: false,
             selectedItem: null,
             scaleExists: false
+
         };
     },
     async mounted() {
         try {
+
             this.loading = true;
             console.log(this.$props.user.email);
             const response = await axios.post(`http://localhost:3000/getListInfo`, {
@@ -27,18 +36,26 @@ export default {
             console.log(response.data);
             this.loading = false;
 
+
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     },
     methods: {
         handleRowClick(item) {
+
             this.selectedItem = item;
             this.isModalOpen = true;
         },
         closeModal() {
             this.isModalOpen = false;
             this.selectedItem = null;
+        },
+        handleInviteClick() {
+            this.isInviteOpen = true;
+        },
+        closeInvite() {
+            this.isInviteOpen = false;
         },
         checkIfScaleExists(selectedItem) {
             let details = selectedItem.scale;
@@ -47,6 +64,15 @@ export default {
             } else {
                 return true;
             }
+        },
+        async inviteMember() {
+
+            let message = "List shared with " + this.invitedEmail;
+            toast.success(message, {
+                timeout: 4000
+            });
+            this.isInviteOpen = false;
+
         }
     },
     name: 'ListView',
@@ -249,8 +275,41 @@ export default {
             <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Sharing details</h2>
 
             <div class="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md">
-                <h1>Team 1</h1>
+                <button @click="handleInviteClick"
+                    class="bg-blue-500 p-3 text-white font-semibold rounded-lg cursor-pointer">
+                    Invite team by email +
+
+                </button>
             </div>
+
+            <div v-if="isInviteOpen"
+                class="fixed inset-0 bg-gray-900 bg-opacity-50 flex  justify-center items-center z-50">
+                <div class="bg-white p-8 h-96 overflow-y-auto rounded-lg shadow-xl  w-1/2">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-semibold text-gray-800">Invite Workspace Members</h2>
+                        <button class="px-4 py-2 font-bold bg-red-500 text-white rounded-lg hover:bg-red-600"
+                            @click="closeInvite">
+                            Close
+                        </button>
+                    </div>
+
+                    <hr class="my-4 border-gray-300">
+
+                    <div class="mt-6">
+                        <div class="flex items-center space-x-4">
+                            <label for="email" class="text-lg text-gray-700">Invite by Email</label>
+                            <input id="email" type="email" v-model="invitedEmail"
+                                class="border-2 border-gray-300 rounded-lg px-4 py-2 w-2/3 focus:outline-none focus:border-blue-500"
+                                placeholder="Enter email address">
+                            <button @click="inviteMember"
+                                class="px-6 py-2 font-bold bg-blue-500 text-white rounded-lg hover:bg-blue-700">
+                                Invite
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
         </div>
     </div>
