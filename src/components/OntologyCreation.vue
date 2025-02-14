@@ -115,7 +115,7 @@ export default {
         this.selectedTraits = [];
         this.selectedVariableDetails = null;
         let listID = response.data["List ID"];
- 
+
         localStorage.setItem("listCreated", this.listName);
         window.location.href = "/list/" + listID;
 

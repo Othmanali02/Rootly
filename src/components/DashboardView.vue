@@ -8,7 +8,11 @@ export default {
   data() {
     return {
       lists: [],
+      myTeams: [],
+      sharedTeams: [],
       searchQuery: '',
+      teamSearchQuery: '',
+      sharedTeamSearchQuery: '',
       loadingScreen: false,
 
     };
@@ -18,10 +22,19 @@ export default {
       // should send the users credentials with the request so that the backend gets
       // only that users lists and shared lists
       this.loadingScreen = true;
+      // should change this to work with UUID
       const response = await axios.post(`http://localhost:3000/rootly/lists/getUserLists`, {
         email: this.$props.user.email
       });
-      console.log(response);
+
+      // this is to get the teams 
+
+      const teamresponse = await axios.post(`http://localhost:3000/rootly/teams/getUserTeams`, {
+        userId: this.$props.user.UUID
+      });
+
+      this.myTeams = teamresponse.data.teamList;
+      this.sharedTeams = teamresponse.data.sharedTeams;
       this.lists = response.data;
       this.loadingScreen = false;
     } catch (error) {
@@ -32,11 +45,24 @@ export default {
     genLink(listName) {
       return "/list/" + listName["List ID"];
     },
+    genTeamLink(team) {
+      return "/teams/" + team["Team ID"];
+    },
   },
   computed: {
     filteredLists() {
       return this.lists.filter((item) => {
         return item.Name.toLowerCase().includes(this.searchQuery.toLowerCase());
+      });
+    },
+    filteredTeams() {
+      return this.myTeams.filter((item) => {
+        return item.Name.toLowerCase().includes(this.teamSearchQuery.toLowerCase());
+      });
+    },
+    filteredSharedTeams() {
+      return this.sharedTeams.filter((item) => {
+        return item.Name.toLowerCase().includes(this.sharedTeamSearchQuery.toLowerCase());
       });
     },
   },
@@ -115,37 +141,68 @@ export default {
           </a>
         </div>
 
-        <!-- <div v-if="this.loadingScreen">
+        <div v-if="this.loadingScreen">
           <img src="../assets/rootlygif.gif" class="h-32 mx-auto" />
 
-        </div> -->
+        </div>
 
-        <div>
-          <ul class="space-y-1">
-              <li 
-                class="flex items-left text-left font-semibold bg-white text-gray-800 border border-gray-300 px-6 py-2 rounded-lg shadow-sm hover:bg-gray-100 hover:border-gray-400 transition-all duration-300">
-                <a class="w-full">
-                  Team 1
-                </a>
-              </li>
-            </ul>
-          <!-- <div v-if="filteredLists.length > 0">
+
+        <div v-else>
+          <div v-if="filteredTeams.length > 0">
             <ul class="space-y-1">
-              <li v-for="(item, index) in filteredLists" :key="index"
+              <li v-for="(item, index) in filteredTeams" :key="index"
                 class="flex items-left text-left font-semibold bg-white text-gray-800 border border-gray-300 px-6 py-2 rounded-lg shadow-sm hover:bg-gray-100 hover:border-gray-400 transition-all duration-300">
-                <a :href="genLink(item)" class="w-full">
+                <a :href="genTeamLink(item)" class="w-full">
                   {{ item.Name }}
                 </a>
               </li>
             </ul>
-          </div> -->
-          <div  class="text-center text-gray-600">
+          </div>
+          <div v-else class="text-center text-gray-600">
             <p>No lists found.</p>
           </div>
         </div>
 
       </div>
 
+      <hr class="my-6">
+
+
+      <h1 class="text-xl font-bold text-left my-4">Shared teams</h1>
+      <div class="bg-gray-200 p-3 max-h-96 overflow-y-auto rounded-lg shadow-lg">
+        <div class="flex items-center space-x-2 mb-6">
+          <input v-model="searchQuery" type="text" placeholder="Search..."
+            class="w-full sm:w-1/2 px-4 py-2 flex-grow rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500" />
+          <!-- <a href="/create"
+            class="flex items-center bg-[#3a5d3f] text-white px-2 py-2 rounded-lg shadow-md text-lg font-semibold transition-all duration-300 transform hover:bg-[#2f4f2f] ml-auto">
+            <span><img class="h-6 w-6 invert" src="../assets/sort.png" /></span>
+          </a> -->
+       
+        </div>
+
+        <div v-if="this.loadingScreen">
+          <img src="../assets/rootlygif.gif" class="h-32 mx-auto" />
+
+        </div>
+
+
+        <div v-else>
+          <div v-if="filteredSharedTeams.length > 0">
+            <ul class="space-y-1">
+              <li v-for="(item, index) in filteredSharedTeams" :key="index"
+                class="flex items-left text-left font-semibold bg-white text-gray-800 border border-gray-300 px-6 py-2 rounded-lg shadow-sm hover:bg-gray-100 hover:border-gray-400 transition-all duration-300">
+                <a :href="genTeamLink(item)" class="w-full">
+                  {{ item.Name }}
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div v-else class="text-center text-gray-600">
+            <p>No lists found.</p>
+          </div>
+        </div>
+
+      </div>
 
 
     </div>

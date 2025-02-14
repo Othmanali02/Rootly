@@ -8,6 +8,7 @@ import DashboardView from "@/components/DashboardView.vue";
 import ListView from "@/components/ListView.vue";
 import RedirectView from "@/components/RedirectView.vue";
 import TeamCreation from "@/components/TeamCreation.vue";
+import TeamDetails from "@/components/TeamDetails.vue";
 
 var user = ref(null);
 
@@ -42,6 +43,12 @@ const router = createRouter({
 			path: "/teams/create",
 			name: "TeamCreation",
 			component: TeamCreation,
+			props: () => ({ user: user.value }),
+		},
+		{
+			path: "/teams/:teamId",
+			name: "TeamDetails",
+			component: TeamDetails,
 			props: () => ({ user: user.value }),
 		},
 		{

@@ -26,7 +26,7 @@ export default {
     },
     async handleLogout() {
       try {
-        await axios.get("/api/rootly/logout");
+        await axios.get("/api/rootly/users/logout");
         window.location.href = "/";
 
       } catch (error) {
