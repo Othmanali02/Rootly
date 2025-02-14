@@ -7,6 +7,7 @@ import OntologyCreation from "@/components/OntologyCreation.vue";
 import DashboardView from "@/components/DashboardView.vue";
 import ListView from "@/components/ListView.vue";
 import RedirectView from "@/components/RedirectView.vue";
+import TeamCreation from "@/components/TeamCreation.vue";
 
 var user = ref(null);
 
@@ -35,6 +36,12 @@ const router = createRouter({
 			path: "/create",
 			name: "OntologyCreation",
 			component: OntologyCreation,
+			props: () => ({ user: user.value }),
+		},
+		{
+			path: "/teams/create",
+			name: "TeamCreation",
+			component: TeamCreation,
 			props: () => ({ user: user.value }),
 		},
 		{

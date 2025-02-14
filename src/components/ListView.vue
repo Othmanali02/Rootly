@@ -26,6 +26,17 @@ export default {
     async mounted() {
         try {
 
+            if (localStorage.getItem("listCreated")) {
+                let listname = localStorage.getItem("listCreated");
+                let message = listname + " has been created!";
+                toast.success(message, {
+                    timeout: 4000
+                });
+                localStorage.removeItem("listCreated");
+            }
+
+            console.log(this.listId);
+
             this.loading = true;
             console.log(this.$props.user.email);
             const response = await axios.post(`http://localhost:3000/getListInfo`, {

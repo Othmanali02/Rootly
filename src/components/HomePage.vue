@@ -23,6 +23,17 @@ export default {
 
       }
 
+    },
+    async handleLogout() {
+      try {
+        await axios.get("/api/logout");
+        window.location.href = "/";
+
+      } catch (error) {
+        console.log(error);
+
+      }
+
     }
   }
 }
@@ -67,8 +78,8 @@ export default {
           </a>
         </div>
         <div class="flex flex-col sm:flex-row justify-center gap-4 mt-4">
-          <a href="/api/logout"
-            class="w-full bg-red-500 text-center font-bold text-lg px-6 py-2 text-white rounded-lg transition">
+          <a @click="handleLogout"
+            class="w-full bg-red-500 cursor-pointer text-center font-bold text-lg px-6 py-2 text-white rounded-lg transition">
             Logout
           </a>
         </div>

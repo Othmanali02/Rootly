@@ -5,7 +5,6 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 onMounted(async () => {
-    console.log("this is being mounted");
     let queryString = Object.keys(route.query)
         .map(key => `${key}=${encodeURIComponent(route.query[key])}`)
         .join('&');
