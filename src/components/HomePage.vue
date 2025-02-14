@@ -15,7 +15,7 @@ export default {
     },
     async handleLogin() {
       try {
-        const response = axios.get("http://localhost:3000/login");
+        const response = axios.get("http://localhost:3000/rootly/users/login");
         console.log(response.data);
 
       } catch (error) {
@@ -26,7 +26,7 @@ export default {
     },
     async handleLogout() {
       try {
-        await axios.get("/api/logout");
+        await axios.get("/api/rootly/logout");
         window.location.href = "/";
 
       } catch (error) {
@@ -88,7 +88,7 @@ export default {
 
       <div v-else>
         <div class="flex flex-col sm:flex-row justify-center gap-4 mt-4 mainBtns">
-          <a href="http://localhost:3000/login"
+          <a href="http://localhost:3000/rootly/users/login"
             class="w-full bg-[#384e1d] text-center font-bold text-lg px-6 py-2 text-white rounded-lg transition">
             Login
           </a>

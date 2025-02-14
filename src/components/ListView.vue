@@ -39,7 +39,7 @@ export default {
 
             this.loading = true;
             console.log(this.$props.user.email);
-            const response = await axios.post(`http://localhost:3000/getListInfo`, {
+            const response = await axios.post(`http://localhost:3000/rootly/lists/getListInfo`, {
                 listId: this.listId
             });
             this.listInformation = response.data.items;

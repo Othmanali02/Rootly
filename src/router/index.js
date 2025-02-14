@@ -65,7 +65,7 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
 	if (to.path !== "/redirect" && !user.value) {
 		try {
-			const response = await axios.get("/api/user-info", {
+			const response = await axios.get("/api/rootly/users/user-info", {
 				withCredentials: true,
 			});
 			user.value = response.data;
@@ -73,7 +73,7 @@ router.beforeEach(async (to, from, next) => {
 		} catch (err) {
 			if (err.status === 401) {
 				console.log("login again");
-				window.location.href = "http://localhost:3000/login";
+				window.location.href = "http://localhost:3000/rootly/users/login";
 			} else if (err.status === 400) {
 				console.log("dw about it twin, just login");
 			} else {

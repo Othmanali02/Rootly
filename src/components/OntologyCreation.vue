@@ -97,7 +97,7 @@ export default {
       try {
 
         let traits = this.selectedTraits;
-        const response = await axios.post("http://localhost:3000/createList", {
+        const response = await axios.post("http://localhost:3000/rootly/lists/createList", {
           traits: traits,
           listName: this.listName,
           userId: this.$props.user.UUID

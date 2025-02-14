@@ -9,7 +9,7 @@ onMounted(async () => {
         .map(key => `${key}=${encodeURIComponent(route.query[key])}`)
         .join('&');
 
-    const finalUrl = "/api/redirect?" + queryString;
+    const finalUrl = "/api/rootly/users/redirect?" + queryString;
 
     try { 
         const response = await axios.get(finalUrl);

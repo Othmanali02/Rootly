@@ -18,7 +18,7 @@ export default {
       // should send the users credentials with the request so that the backend gets
       // only that users lists and shared lists
       this.loadingScreen = true;
-      const response = await axios.post(`http://localhost:3000/getUserLists`, {
+      const response = await axios.post(`http://localhost:3000/rootly/lists/getUserLists`, {
         email: this.$props.user.email
       });
       console.log(response);
