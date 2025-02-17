@@ -13,13 +13,15 @@ export default {
     data() {
         return {
             listsInformation: [],
-            teamName: "",
+            teamInfo: "",
             invitedEmail: "",
             loading: false,
             isModalOpen: false,
             isInviteOpen: false,
             selectedItem: null,
-            scaleExists: false
+            scaleExists: false,
+            teamLeader: null,
+            teamMembers: []
         };
     },
     async mounted() {
@@ -34,15 +36,16 @@ export default {
                 localStorage.removeItem("teamCreated");
             }
 
-            console.log(this.teamId);
-
             this.loading = true;
-            console.log(this.$props.user.email);
             const response = await axios.post(`http://localhost:3000/rootly/teams/getTeamInfo`, {
                 teamId: this.teamId
             });
             console.log(response.data);
-            this.listsInformation = response.data;
+
+            this.listsInformation = response.data.lists;
+            this.teamInfo = response.data.teamInfo;
+            this.teamLeader = response.data.owner.Name;
+            this.teamMembers = response.data.members;
 
             this.loading = false;
 
@@ -77,13 +80,55 @@ export default {
             }
         },
         async inviteMember() {
+            try {
+                const response = await axios.patch(`http://localhost:3000/rootly/teams/addMember`, {
+                    teamId: this.teamInfo.id,
+                    memberEmail: this.invitedEmail,
+                    teamMembers: this.teamInfo["User ID"]
+                });
 
-            let message = "List shared with " + this.invitedEmail;
-            toast.success(message, {
-                timeout: 4000
-            });
-            this.isInviteOpen = false;
+                console.log(response);
 
+                let message = "List shared with " + response.data.userObj.Name;
+                toast.success(message, {
+                    timeout: 4000
+                });
+                this.teamMembers.push(response.data.userObj);
+                this.isInviteOpen = false;
+            } catch (error) {
+                toast.error("Something went wrong", {
+                    timeout: 4000
+                });
+                console.log(error);
+            }
+
+
+        },
+        async kickMember(index, memberID) {
+            console.log(memberID);
+            console.log(this.teamInfo.id);
+            if (confirm(`Are you sure you want to remove ${this.teamMembers[index].Name}?`)) {
+                try {
+                    await axios.patch(`http://localhost:3000/rootly/teams/removeMember`, {
+                        teamId: this.teamInfo.id,
+                        memberID: memberID,
+                        teamMembers: this.teamInfo["User ID"]
+                    });
+
+                    let message = this.teamMembers[index].Name + " is now gone forever you can only undo this with a human sacrifice. ";
+                    toast.success(message, {
+                        timeout: 4000
+                    });
+                    this.teamMembers.splice(index, 1);
+                } catch (error) {
+                    toast.error("Something went wrong", {
+                        timeout: 4000
+                    });
+                    console.log(error);
+                }
+
+
+            }
         }
     },
     name: 'TeamDetails',
@@ -97,7 +142,7 @@ export default {
         <div class="w-full max-w-2xl  text-left dashItems bg-gray-200 p-6 rounded-lg shadow-lg">
 
 
-            <h2 class="text-xl text-left font-semibold text-gray-900 mb-4">{{ this.teamName }}</h2>
+            <h2 class="text-xl text-left font-semibold text-gray-900 mb-4">{{ this.teamInfo.Name }}</h2>
 
             <h2 class="text-xl text-left font-semibold text-gray-700 mb-4">Team Lists</h2>
 
@@ -282,12 +327,51 @@ export default {
             </div>
 
 
+
             <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Team Members</h2>
+
+            <div class="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md">
+                <table class="min-w-full table-auto">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 text-left">Name</th>
+                            <th class="px-4 py-2 text-left">Email</th>
+                            <th class="px-4 py-2 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-if="teamMembers.length === 0">
+                            <td colspan="3" class="px-4 py-2 text-center text-gray-500">
+                                No Members in this team.. pretty lonely in here ngl
+                            </td>
+                        </tr>
+
+                        <tr v-for="(member, index) in teamMembers" :key="index" class="border-b">
+                            <td class="px-4 py-2">{{ member.Name }}</td>
+                            <td class="px-4 py-2">{{ member.Email }}</td>
+                            <td class="px-4 py-2 text-center">
+                                <button @click="kickMember(index, member['User ID'])"
+                                    class="bg-red-500 font-semibold text-xs text-white px-3 py-2 rounded-lg hover:bg-red-600">
+                                    Remove
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Team Leader</h2>
+
+            <div class="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md">
+                <h3>{{ this.teamLeader }}</h3>
+            </div>
+
+            <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Invite Members</h2>
 
             <div class="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md">
                 <button @click="handleInviteClick"
                     class="bg-blue-500 p-3 text-white font-semibold rounded-lg cursor-pointer">
-                    Invite team by email +
+                    Invite team by email <img class="inline h-5 invert" src="../assets/plus.png" alt="+" />
 
                 </button>
             </div>

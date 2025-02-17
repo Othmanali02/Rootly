@@ -77,14 +77,30 @@ export default {
             }
         },
         async inviteMember() {
+            try {
+                const response = await axios.patch(`http://localhost:3000/rootly/teams/addMember`, {
+                    teamId: this.teamInfo.id,
+                    memberEmail: this.invitedEmail,
+                    teamMembers: this.teamInfo["User ID"]
+                });
 
-            let message = "List shared with " + this.invitedEmail;
-            toast.success(message, {
-                timeout: 4000
-            });
-            this.isInviteOpen = false;
+                console.log(response);
 
-        }
+                let message = "List shared with " + response.data.userObj.Name;
+                toast.success(message, {
+                    timeout: 4000
+                });
+                this.teamMembers.push(response.data.userObj);
+                this.isInviteOpen = false;
+            } catch (error) {
+                toast.error("Something went wrong", {
+                    timeout: 4000
+                });
+                console.log(error);
+            }
+
+
+        },
     },
     name: 'ListView',
 };
