@@ -49,7 +49,10 @@ const router = createRouter({
 			path: "/teams/:teamId",
 			name: "TeamDetails",
 			component: TeamDetails,
-			props: () => ({ user: user.value }),
+			props: (route) => ({
+				user: user.value,
+				...route.params,
+			}),
 		},
 		{
 			path: "/list/:listId",

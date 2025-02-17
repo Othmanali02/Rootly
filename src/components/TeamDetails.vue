@@ -9,11 +9,11 @@ import { useToast } from "vue-toastification";
 const toast = useToast();
 
 export default {
-    props: ['user', 'listId'],
+    props: ['user', 'teamId'],
     data() {
         return {
-            listInformation: [],
-            listName: "",
+            listsInformation: [],
+            teamName: "",
             invitedEmail: "",
             loading: false,
             isModalOpen: false,
@@ -26,24 +26,24 @@ export default {
         try {
 
             if (localStorage.getItem("teamCreated")) {
-                let listname = localStorage.getItem("teamCreated");
-                let message = listname + " has been created!";
+                let teamName = localStorage.getItem("teamCreated");
+                let message = teamName + " has been created!";
                 toast.success(message, {
                     timeout: 4000
                 });
                 localStorage.removeItem("teamCreated");
             }
 
-            console.log(this.listId);
+            console.log(this.teamId);
 
             this.loading = true;
             console.log(this.$props.user.email);
             const response = await axios.post(`http://localhost:3000/rootly/teams/getTeamInfo`, {
-                listId: this.listId
+                teamId: this.teamId
             });
-            this.listInformation = response.data.items;
-            this.listName = response.data.listName;
             console.log(response.data);
+            this.listsInformation = response.data;
+
             this.loading = false;
 
 
@@ -53,9 +53,10 @@ export default {
     },
     methods: {
         handleRowClick(item) {
-
-            this.selectedItem = item;
-            this.isModalOpen = true;
+            const genLocation = "/list/" + item.listId;
+            window.location.href = genLocation;
+            // this.selectedItem = item;
+            // this.isModalOpen = true;
         },
         closeModal() {
             this.isModalOpen = false;
@@ -96,9 +97,9 @@ export default {
         <div class="w-full max-w-2xl  text-left dashItems bg-gray-200 p-6 rounded-lg shadow-lg">
 
 
-            <h2 class="text-xl text-left font-semibold text-gray-900 mb-4">{{ this.listName }}</h2>
+            <h2 class="text-xl text-left font-semibold text-gray-900 mb-4">{{ this.teamName }}</h2>
 
-            <h2 class="text-xl text-left font-semibold text-gray-700 mb-4">List Information</h2>
+            <h2 class="text-xl text-left font-semibold text-gray-700 mb-4">Team Lists</h2>
 
             <div v-if="loading">
                 <img src="../assets/rootlygif.gif" alt="Loading" class="h-96 mx-auto" />
@@ -108,20 +109,19 @@ export default {
                 <table class="w-full table-auto text-left">
                     <thead>
                         <tr class="bg-gray-200">
-                            <th class="px-4 py-2 text-gray-600 font-medium">Crop</th>
-                            <th class="px-4 py-2 text-gray-600 font-medium">Institution</th>
-                            <th class="px-4 py-2 text-gray-600 font-medium">Observation Variable</th>
-                            <th class="px-4 py-2 text-gray-600 font-medium">Trait Name</th>
+                            <th class="px-4 py-2 text-gray-600 font-medium">List Name</th>
+                            <th class="px-4 py-2 text-gray-600 font-medium">Length</th>
+                            <th class="px-4 py-2 text-gray-600 font-medium">Owner</th>
+
                         </tr>
                     </thead>
                     <tbody class="rounded-lg overflow-y-auto">
-                        <tr v-for="(item, index) in listInformation" :key="index"
+                        <tr v-for="(item, index) in listsInformation" :key="index"
                             class="hover:bg-gray-200 transition-all duration-300 border-b border-gray-300 cursor-pointer"
                             @click="handleRowClick(item)">
-                            <td class="px-4 py-2 text-gray-700">{{ item.crop }}</td>
-                            <td class="px-4 py-2 text-gray-700">{{ item.institution }}</td>
-                            <td class="px-4 py-2 text-gray-700">{{ item.observationVariableName }}</td>
-                            <td class="px-4 py-2 text-gray-700">{{ item.trait.traitName }}</td>
+                            <td class="px-4 py-2 text-gray-700">{{ item.listName }}</td>
+                            <td class="px-4 py-2 text-gray-700">{{ item.length }}</td>
+                            <td class="px-4 py-2 text-gray-700">{{ item.owner }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -282,7 +282,7 @@ export default {
             </div>
 
 
-            <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Sharing details</h2>
+            <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Team Members</h2>
 
             <div class="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md">
                 <button @click="handleInviteClick"

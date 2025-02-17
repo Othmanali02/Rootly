@@ -129,7 +129,7 @@ export default {
       <h1 class="text-xl font-bold text-left my-4">My teams</h1>
       <div class="bg-gray-200 p-3 max-h-96 overflow-y-auto rounded-lg shadow-lg">
         <div class="flex items-center space-x-2 mb-6">
-          <input v-model="searchQuery" type="text" placeholder="Search..."
+          <input v-model="teamSearchQuery" type="text" placeholder="Search..."
             class="w-full sm:w-1/2 px-4 py-2 flex-grow rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500" />
           <!-- <a href="/create"
             class="flex items-center bg-[#3a5d3f] text-white px-2 py-2 rounded-lg shadow-md text-lg font-semibold transition-all duration-300 transform hover:bg-[#2f4f2f] ml-auto">
@@ -171,7 +171,7 @@ export default {
       <h1 class="text-xl font-bold text-left my-4">Shared teams</h1>
       <div class="bg-gray-200 p-3 max-h-96 overflow-y-auto rounded-lg shadow-lg">
         <div class="flex items-center space-x-2 mb-6">
-          <input v-model="searchQuery" type="text" placeholder="Search..."
+          <input v-model="sharedTeamSearchQuery" type="text" placeholder="Search..."
             class="w-full sm:w-1/2 px-4 py-2 flex-grow rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500" />
           <!-- <a href="/create"
             class="flex items-center bg-[#3a5d3f] text-white px-2 py-2 rounded-lg shadow-md text-lg font-semibold transition-all duration-300 transform hover:bg-[#2f4f2f] ml-auto">
