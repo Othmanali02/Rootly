@@ -100,6 +100,10 @@ router.beforeEach(async (to, from, next) => {
 		}
 	}
 
+	if (to.path === "/teams/create" || to.path === "/lists/create") {
+		return next();
+	}
+
 	if (to.path.includes("/lists/")) {
 		const listId = to.params.listId;
 		console.log("Checking access for list " + listId);
