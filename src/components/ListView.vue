@@ -88,6 +88,83 @@ export default {
                 return true;
             }
         },
+        async generateFieldBookFile() {
+
+            try {
+                toast.info("Generating the FieldBook File", {
+                    timeout: 4000
+                });
+
+                const response = await axios.post('/api/rootly/lists/create-csv', {
+                    listData: this.listInformation,
+                    listName: this.listName
+                }, { responseType: 'blob' });
+
+                console.log('CSV Created:', response.data);
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'FieldBook.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            } catch (error) {
+                console.error('Error creating CSV:', error);
+            }
+
+        },
+        async generateGridscoreTsv() {
+
+            try {
+                toast.info("Generating the Gridscore TSV file", {
+                    timeout: 4000
+                });
+
+                const response = await axios.post('/api/rootly/lists/create-tsv-gridscore', {
+                    listData: this.listInformation,
+                    listName: this.listName
+                }, { responseType: 'blob' });
+
+                console.log('TSV Created:', response.data);
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'Gridscore-tsv.tsv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            } catch (error) {
+                console.error('Error creating CSV:', error);
+            }
+
+        },
+        async generateGridscoreJSON() {
+            try {
+                toast.info("Generating the Gridscore JSON file", {
+                    timeout: 4000
+                });
+
+                const response = await axios.post('/api/rootly/lists/create-json-gridscore', {
+                    listData: this.listInformation,
+                    listName: this.listName
+                }, { responseType: 'blob' });
+
+                console.log('TSV Created:', response.data);
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'Gridscore-JSON.json');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            } catch (error) {
+                console.error('Error creating CSV:', error);
+            }
+
+        },
         async inviteMember() {
             try {
                 const response = await axios.patch(`http://localhost:3000/rootly/teams/addMember`, {
@@ -308,6 +385,30 @@ export default {
 
 
                 </div>
+            </div>
+
+            <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Export List</h2>
+
+            <div class="overflow-x-auto bg-gray-100 p-4 flex-wrap space-x-4 rounded-lg shadow-md">
+                <button @click="generateFieldBookFile"
+                    class="bg-gray-400 p-3 text-white font-semibold hover:bg-green-600 transition-300 rounded-lg cursor-pointer">
+                    Generate Fieldbook Trait File <img src="../assets/fieldbook.png" class="h-6 inline mx-2" />
+
+                </button>
+
+                <button @click="generateGridscoreTsv"
+                    class="bg-gray-800 p-3 text-white font-semibold hover:bg-gray-900 rounded-lg cursor-pointer">
+                    Generate Gridscore .tsv <img src="../assets/gridscore.jpeg" class="h-6 inline mx-2" />
+
+
+                </button>
+
+                <button @click="generateGridscoreJSON"
+                    class="bg-gray-700 p-3 text-white font-semibold hover:bg-gray-800 rounded-lg cursor-pointer">
+                    Generate Gridscore .json<img src="../assets/gridscore.jpeg" class="h-6 inline mx-2" />
+
+
+                </button>
             </div>
 
             <div v-if="this.isOwner">
