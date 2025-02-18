@@ -21,11 +21,24 @@ export default {
             selectedItem: null,
             scaleExists: false,
             teamLeader: null,
-            teamMembers: []
+            teamMembers: [],
+            isOwner: false,
+            isMember: false
         };
     },
     async mounted() {
         try {
+            const teamResponse = await axios.get(
+                `/api/rootly/teams/status/${this.teamId}`,
+                {
+                    withCredentials: true,
+                }
+            );
+
+            this.isOwner = teamResponse.data.isOwner;
+            this.isMember = teamResponse.data.isMember;
+            console.log(this.isOwner);
+            console.log(this.isMember);
 
             if (localStorage.getItem("teamCreated")) {
                 let teamName = localStorage.getItem("teamCreated");
@@ -174,193 +187,42 @@ export default {
                 </table>
             </div>
 
-            <div v-if="isModalOpen"
-                class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-                <div class="bg-white p-6  h-[750px]  overflow-y-auto rounded-lg shadow-xl w-1/2">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-semibold text-gray-800 mb-4">{{ selectedItem.trait.traitName }} Details
-                        </h2>
-                        <button class="px-4 py-2 font-bold bg-red-500 text-white rounded-lg hover:bg-red-600"
-                            @click="closeModal">
-                            Close
-                        </button>
-                    </div>
 
 
-                    <!-- 
-                    <p><strong>Crop:</strong> {{ selectedItem.crop }}</p>
-                    <p><strong>Institution:</strong> {{ selectedItem.institution }}</p>
-                    <p><strong>Observation Variable:</strong> {{ selectedItem.observationVariableName }}</p>
-                    <p><strong>Trait Name:</strong> {{ selectedItem.trait.traitName }}</p>
-                    <p><strong>Details:</strong> {{ selectedItem.details }}</p> -->
+            <div v-if="this.isOwner">
+                <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Team Members</h2>
 
-                    <section>
-                        <h2>Variable Details</h2>
-                        <div class="flex border rounded my-2 w-full">
-                            <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
-                                Crop
-                            </div>
-                            <div class="w-2/3 p-3 bg-white">
-                                {{ selectedItem.crop }}
-                            </div>
-                        </div>
-                        <div class="flex border rounded my-2 w-full">
-                            <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
-                                Variable Name
-                            </div>
-                            <div class="w-2/3 p-3 bg-white">
-                                {{ selectedItem.observationVariableName }}
-                            </div>
-                        </div>
-                        <div class="flex border rounded my-2 w-full">
-                            <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
-                                Growth Stage
-                            </div>
-                            <div class="w-2/3 p-3 bg-white">
-                                {{ selectedItem.growthStage }}
-                            </div>
-                        </div>
+                <div class="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md">
+                    <table class="min-w-full table-auto">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="px-4 py-2 text-left">Name</th>
+                                <th class="px-4 py-2 text-left">Email</th>
+                                <th class="px-4 py-2 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="teamMembers.length === 0">
+                                <td colspan="3" class="px-4 py-2 text-center text-gray-500">
+                                    No Members in this team.. pretty lonely in here ngl
+                                </td>
+                            </tr>
 
-                        <h4 class="bg-gray-200 rounded-lg px-2 py-2 text-black text-center">Trait</h4>
-                        <div class="flex border rounded my-2 w-full">
-                            <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
-                                Trait Name
-                            </div>
-                            <div class="w-2/3 p-3 bg-white">
-                                {{ selectedItem.trait.traitName }}
-                            </div>
-                        </div>
-                        <div class="flex border rounded my-2 w-full">
-                            <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
-                                Trait Class
-                            </div>
-                            <div class="w-2/3 p-3 bg-white">
-                                {{ selectedItem.trait.traitClass }}
-                            </div>
-                        </div>
-                        <div class="flex border rounded my-2 w-full">
-                            <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
-                                Description
-                            </div>
-                            <div class="w-2/3 p-3 bg-white">
-                                {{ selectedItem.trait.description }}
-                            </div>
-                        </div>
-                        <div class="flex border rounded my-2 w-full">
-                            <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
-                                Main Abbreviation
-                            </div>
-                            <div class="w-2/3 p-3 bg-white">
-                                {{ selectedItem.trait.mainAbbreviation }}
-
-                            </div>
-                        </div>
-
-                        <h4 class="bg-gray-200 rounded-lg px-2 py-2 text-black text-center">Method</h4>
-                        <div class="flex border rounded my-2 w-full">
-                            <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
-                                Method Name
-                            </div>
-                            <div class="w-2/3 p-3 bg-white">
-                                {{ selectedItem.method.methodName }}
-                            </div>
-                        </div>
-                        <div class="flex border rounded my-2 w-full">
-                            <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
-                                Method Class
-                            </div>
-                            <div class="w-2/3 p-3 bg-white">
-                                {{ selectedItem.method.methodClass }}
-                            </div>
-                        </div>
-                        <div class="flex border rounded my-2 w-full">
-                            <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
-                                Description
-                            </div>
-                            <div class="w-2/3 p-3 bg-white">
-                                {{ selectedItem.method.description }}
-                            </div>
-                        </div>
-                        <div class="flex border rounded my-2 w-full">
-                            <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
-                                Formula
-                            </div>
-                            <div class="w-2/3 p-3 bg-white">
-                                {{ selectedItem.method.formula }}
-
-                            </div>
-                        </div>
-
-                        <div v-if="checkIfScaleExists(selectedItem)">
-                            <h4 class="bg-gray-200 rounded-lg px-2 py-2 text-black text-center">Scale</h4>
-                            <div class="flex border rounded my-2 w-full">
-                                <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
-                                    Scale Name
-                                </div>
-                                <div class="w-2/3 p-3 bg-white">
-                                    {{ selectedItem.scale.scaleName }}
-                                </div>
-                            </div>
-                            <div class="flex border rounded my-2 w-full">
-                                <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
-                                    Data Type
-                                </div>
-                                <div class="w-2/3 p-3 bg-white">
-                                    {{ selectedItem.scale.dataType }}
-                                </div>
-                            </div>
-                            <div class="flex border rounded my-2 w-full">
-                                <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
-                                    Categories
-                                </div>
-                                <div class="w-2/3 p-3 bg-white">
-                                    {{ selectedItem.scale.categories }}
-                                </div>
-                            </div>
-
-
-                        </div>
-
-                    </section>
-
-
-
+                            <tr v-for="(member, index) in teamMembers" :key="index" class="border-b">
+                                <td class="px-4 py-2">{{ member.Name }}</td>
+                                <td class="px-4 py-2">{{ member.Email }}</td>
+                                <td class="px-4 py-2 text-center">
+                                    <button @click="kickMember(index, member.id)"
+                                        class="bg-red-500 font-semibold text-xs text-white px-3 py-2 rounded-lg hover:bg-red-600">
+                                        Remove
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-
-
-            <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Team Members</h2>
-
-            <div class="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md">
-                <table class="min-w-full table-auto">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th class="px-4 py-2 text-left">Name</th>
-                            <th class="px-4 py-2 text-left">Email</th>
-                            <th class="px-4 py-2 text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="teamMembers.length === 0">
-                            <td colspan="3" class="px-4 py-2 text-center text-gray-500">
-                                No Members in this team.. pretty lonely in here ngl
-                            </td>
-                        </tr>
-
-                        <tr v-for="(member, index) in teamMembers" :key="index" class="border-b">
-                            <td class="px-4 py-2">{{ member.Name }}</td>
-                            <td class="px-4 py-2">{{ member.Email }}</td>
-                            <td class="px-4 py-2 text-center">
-                                <button @click="kickMember(index, member.id)"
-                                    class="bg-red-500 font-semibold text-xs text-white px-3 py-2 rounded-lg hover:bg-red-600">
-                                    Remove
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
 
             <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Team Leader</h2>
 
@@ -368,15 +230,19 @@ export default {
                 <h3>{{ this.teamLeader }}</h3>
             </div>
 
-            <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Invite Members</h2>
 
-            <div class="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md">
-                <button @click="handleInviteClick"
-                    class="bg-blue-500 p-3 text-white font-semibold rounded-lg cursor-pointer">
-                    Invite team by email <img class="inline h-5 invert" src="../assets/plus.png" alt="+" />
+            <div v-if="this.isOwner">
+                <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Invite Members</h2>
 
-                </button>
+                <div class="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md">
+                    <button @click="handleInviteClick"
+                        class="bg-blue-500 p-3 text-white font-semibold rounded-lg cursor-pointer">
+                        Invite team by email <img class="inline h-5 invert" src="../assets/plus.png" alt="+" />
+
+                    </button>
+                </div>
             </div>
+
 
             <div v-if="isInviteOpen"
                 class="fixed inset-0 bg-gray-900 bg-opacity-50 flex  justify-center items-center z-50">

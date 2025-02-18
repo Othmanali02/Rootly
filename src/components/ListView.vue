@@ -19,12 +19,24 @@ export default {
             isModalOpen: false,
             isInviteOpen: false,
             selectedItem: null,
-            scaleExists: false
-
+            scaleExists: false,
+            isOwner: false,
+            isMember: false
         };
     },
     async mounted() {
         try {
+
+            const listStatus = await axios.get(
+                `/api/rootly/users/status/${this.listId}`,
+                {
+                    withCredentials: true,
+                }
+            );
+
+            this.isOwner = listStatus.data.isOwner;
+            this.isMember = listStatus.data.isMember;
+
 
             if (localStorage.getItem("listCreated")) {
                 let listname = localStorage.getItem("listCreated");
@@ -298,16 +310,18 @@ export default {
                 </div>
             </div>
 
+            <div v-if="this.isOwner">
+                <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Sharing details</h2>
 
-            <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Sharing details</h2>
+                <div class="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md">
+                    <button @click="handleInviteClick"
+                        class="bg-blue-500 p-3 text-white font-semibold rounded-lg cursor-pointer">
+                        Invite team by email +
 
-            <div class="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md">
-                <button @click="handleInviteClick"
-                    class="bg-blue-500 p-3 text-white font-semibold rounded-lg cursor-pointer">
-                    Invite team by email +
-
-                </button>
+                    </button>
+                </div>
             </div>
+
 
             <div v-if="isInviteOpen"
                 class="fixed inset-0 bg-gray-900 bg-opacity-50 flex  justify-center items-center z-50">

@@ -9,6 +9,7 @@ import ListView from "@/components/ListView.vue";
 import RedirectView from "@/components/RedirectView.vue";
 import TeamCreation from "@/components/TeamCreation.vue";
 import TeamDetails from "@/components/TeamDetails.vue";
+import NotAuthorized from "@/components/NotAuthorized.vue";
 
 var user = ref(null);
 
@@ -69,12 +70,19 @@ const router = createRouter({
 			component: RedirectView,
 			props: true,
 		},
+		{
+			path: "/not-authorized",
+			name: "NotAuthorized",
+			component: NotAuthorized,
+			props: () => ({ user: user.value }),
+		},
 	],
 });
 
 router.beforeEach(async (to, from, next) => {
 	if (to.path !== "/redirect" && !user.value) {
 		try {
+			// check the UUID too not just the token big bro
 			const response = await axios.get("/api/rootly/users/user-info", {
 				withCredentials: true,
 			});
@@ -92,27 +100,54 @@ router.beforeEach(async (to, from, next) => {
 		}
 	}
 
-	// if (to.path.includes("/lists/")) {
-	// 	try {
-	// 		const listId = to.params.listId;
-	// 		console.log("This one " + listId);
+	if (to.path.includes("/lists/")) {
+		const listId = to.params.listId;
+		console.log("Checking access for list " + listId);
 
-	// 		const listResponse = await axios.get(
-	// 			`/api/rootly/users/status/${listId}`,
-	// 			{
-	// 				withCredentials: true,
-	// 			}
-	// 		);
+		try {
+			const listResponse = await axios.get(
+				`/api/rootly/users/status/${listId}`,
+				{
+					withCredentials: true,
+				}
+			);
+			console.log("Checking access for list " + listId);
+			console.log(listResponse.data);
 
-	// 		if (!listResponse.data.isOwner) {
-	// 			console.log("User is not the owner of the list");
-	// 			return next({ path: "/not-authorized" });
-	// 		}
-	// 	} catch (err) {
-	// 		console.error("Error fetching list data:", err);
-	// 		return next({ path: "/error" });
-	// 	}
-	// }
+			// checks  if the user is either the owner or if the list is shared with them
+			if (!listResponse.data.isOwner && !listResponse.data.isMember) {
+				console.log("User is not authorized to view this list");
+				return next({ path: "/not-authorized" });
+			}
+		} catch (err) {
+			console.error("Error fetching list data:", err);
+			return next({ path: "/error" });
+		}
+	}
+
+	// Check access for /teams/:teamId
+	if (to.path.includes("/teams/")) {
+		const teamId = to.params.teamId;
+		console.log("Checking access for team " + teamId);
+
+		try {
+			const teamResponse = await axios.get(
+				`/api/rootly/teams/status/${teamId}`,
+				{
+					withCredentials: true,
+				}
+			);
+
+			if (!teamResponse.data.isMember && !teamResponse.data.isOwner) {
+				console.log("User is not authorized to view this team");
+				return next({ path: "/not-authorized" });
+			}
+		} catch (err) {
+			console.error("Error fetching team data:", err);
+			return next({ path: "/error" });
+		}
+	}
+
 	next();
 });
 
