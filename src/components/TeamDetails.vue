@@ -13,7 +13,7 @@ export default {
     data() {
         return {
             listsInformation: [],
-            teamInfo: "",
+            teamInfo: {},
             invitedEmail: "",
             loading: false,
             isModalOpen: false,
@@ -44,6 +44,7 @@ export default {
 
             this.listsInformation = response.data.lists;
             this.teamInfo = response.data.teamInfo;
+
             this.teamLeader = response.data.owner.Name;
             this.teamMembers = response.data.members;
 
@@ -87,7 +88,7 @@ export default {
                     teamMembers: this.teamInfo["User ID"]
                 });
 
-                console.log(response);
+                this.teamInfo["User ID"] = response.data.newMembers;
 
                 let message = "List shared with " + response.data.userObj.Name;
                 toast.success(message, {
@@ -105,20 +106,22 @@ export default {
 
         },
         async kickMember(index, memberID) {
-            console.log(memberID);
-            console.log(this.teamInfo.id);
             if (confirm(`Are you sure you want to remove ${this.teamMembers[index].Name}?`)) {
                 try {
-                    await axios.patch(`http://localhost:3000/rootly/teams/removeMember`, {
+                    console.log(this.teamMembers);
+                    const response = await axios.patch(`http://localhost:3000/rootly/teams/removeMember`, {
                         teamId: this.teamInfo.id,
                         memberID: memberID,
                         teamMembers: this.teamInfo["User ID"]
                     });
 
-                    let message = this.teamMembers[index].Name + " is now gone forever you can only undo this with a human sacrifice. ";
+                    this.teamInfo["User ID"] = response.data.newMembers;
+
+                    let message = this.teamMembers[index].Name + " has been removed from this team.";
                     toast.success(message, {
                         timeout: 4000
                     });
+
                     this.teamMembers.splice(index, 1);
                 } catch (error) {
                     toast.error("Something went wrong", {
@@ -126,10 +129,9 @@ export default {
                     });
                     console.log(error);
                 }
-
-
             }
         }
+
     },
     name: 'TeamDetails',
 };
@@ -350,7 +352,7 @@ export default {
                             <td class="px-4 py-2">{{ member.Name }}</td>
                             <td class="px-4 py-2">{{ member.Email }}</td>
                             <td class="px-4 py-2 text-center">
-                                <button @click="kickMember(index, member['User ID'])"
+                                <button @click="kickMember(index, member.id)"
                                     class="bg-red-500 font-semibold text-xs text-white px-3 py-2 rounded-lg hover:bg-red-600">
                                     Remove
                                 </button>

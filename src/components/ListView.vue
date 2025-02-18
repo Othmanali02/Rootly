@@ -84,7 +84,7 @@ export default {
                     teamMembers: this.teamInfo["User ID"]
                 });
 
-                console.log(response);
+                this.teamInfo["User ID"] = response.data.newMembers;
 
                 let message = "List shared with " + response.data.userObj.Name;
                 toast.success(message, {
