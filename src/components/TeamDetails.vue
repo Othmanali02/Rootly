@@ -56,7 +56,7 @@ export default {
     },
     methods: {
         handleRowClick(item) {
-            const genLocation = "/list/" + item.listId;
+            const genLocation = "/lists/" + item.listId;
             window.location.href = genLocation;
             // this.selectedItem = item;
             // this.isModalOpen = true;

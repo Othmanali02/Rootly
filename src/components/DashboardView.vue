@@ -43,7 +43,7 @@ export default {
   },
   methods: {
     genLink(listName) {
-      return "/list/" + listName["List ID"];
+      return "/lists/" + listName["List ID"];
     },
     genTeamLink(team) {
       return "/teams/" + team["Team ID"];
@@ -94,7 +94,7 @@ export default {
             class="flex items-center bg-[#3a5d3f] text-white px-2 py-2 rounded-lg shadow-md text-lg font-semibold transition-all duration-300 transform hover:bg-[#2f4f2f] ml-auto">
             <span><img class="h-6 w-6 invert" src="../assets/sort.png" /></span>
           </a> -->
-          <a href="/create"
+          <a href="/lists/create"
             class="flex items-center bg-[#3a5d3f] text-white px-4 py-2 rounded-lg shadow-md font-semibold transition-all duration-300 transform hover:bg-[#2f4f2f] ml-auto">
             <span>Create List</span>
           </a>

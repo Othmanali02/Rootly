@@ -34,12 +34,6 @@ const router = createRouter({
 			props: () => ({ user: user.value }),
 		},
 		{
-			path: "/create",
-			name: "OntologyCreation",
-			component: OntologyCreation,
-			props: () => ({ user: user.value }),
-		},
-		{
 			path: "/teams/create",
 			name: "TeamCreation",
 			component: TeamCreation,
@@ -55,13 +49,19 @@ const router = createRouter({
 			}),
 		},
 		{
-			path: "/list/:listId",
+			path: "/lists/:listId",
 			name: "ListView",
 			component: ListView,
 			props: (route) => ({
 				user: user.value,
 				...route.params,
 			}),
+		},
+		{
+			path: "/lists/create",
+			name: "OntologyCreation",
+			component: OntologyCreation,
+			props: () => ({ user: user.value }),
 		},
 		{
 			path: "/redirect",
@@ -91,6 +91,28 @@ router.beforeEach(async (to, from, next) => {
 			}
 		}
 	}
+
+	// if (to.path.includes("/lists/")) {
+	// 	try {
+	// 		const listId = to.params.listId;
+	// 		console.log("This one " + listId);
+
+	// 		const listResponse = await axios.get(
+	// 			`/api/rootly/users/status/${listId}`,
+	// 			{
+	// 				withCredentials: true,
+	// 			}
+	// 		);
+
+	// 		if (!listResponse.data.isOwner) {
+	// 			console.log("User is not the owner of the list");
+	// 			return next({ path: "/not-authorized" });
+	// 		}
+	// 	} catch (err) {
+	// 		console.error("Error fetching list data:", err);
+	// 		return next({ path: "/error" });
+	// 	}
+	// }
 	next();
 });
 
