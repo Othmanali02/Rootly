@@ -117,7 +117,7 @@ export default {
         let listID = response.data["List ID"];
 
         localStorage.setItem("listCreated", this.listName);
-        window.location.href = "/list/" + listID;
+        window.location.href = "/lists/" + listID;
 
 
       } catch (error) {

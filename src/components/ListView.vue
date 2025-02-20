@@ -73,7 +73,7 @@ export default {
     },
     async mounted() {
         try {
-
+            console.log("Mounted");
             const listStatus = await axios.get(
                 `/api/rootly/users/status/${this.listId}`,
                 {
@@ -478,7 +478,7 @@ export default {
                             <td class="px-4 py-2 text-gray-700">{{ item.cropOntologyData.observationVariableName }}</td>
                             <td class="px-4 py-2 text-gray-700">{{ item.cropOntologyData.trait.traitName }}</td>
 
-                            <td class="px-4 py-2 text-center">
+                            <td v-if="this.isOwner" class="px-4 py-2 text-center">
                                 <button @click="handleRemoveClick(item)"
                                     class="px-4 py-2 bg-red-500 text-white text-xs font-semibold rounded-lg shadow-md hover:bg-red-600 transition duration-300">
                                     Remove
