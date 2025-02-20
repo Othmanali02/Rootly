@@ -36,6 +36,39 @@ export default {
             selectedVariableDetails: [],
             fetchTermDetails: false,
             fetchVariableDetails: false,
+            selectedBar: 1,
+            customVariables: [],
+            inputValue: {
+                crop: '',
+                observationVariableName: '',
+                growthStage: '',
+                defaultValue: "",
+                institution: "Rootly",
+                trait: {
+                    traitName: '',
+                    traitClass: '',
+                    description: '',
+                    mainAbbreviation: '',
+                },
+                method: {
+                    methodName: '',
+                    methodClass: '',
+                    description: '',
+                    formula: '',
+                },
+                scale: {
+                    scaleName: '',
+                    dataType: '',
+                    validValues: {
+                        categories: []
+                    },
+                }
+            },
+            listLoading: false,
+            myCustomVariables: [],
+            chosenLists: [],
+            searchQuery: ""
+
         };
     },
     async mounted() {
@@ -71,7 +104,14 @@ export default {
             this.listInformation = response.data.items;
             this.listName = response.data.listName;
             this.listBrowID = response.data.listBrowID;
-            console.log(response.data);
+            console.log(response.data.customVariables);
+
+            if (response.data.customVariables.length >= 1) {
+                for (let i = 0; i < response.data.customVariables.length; i++) {
+                    this.customVariables.push({ cropOntologyData: JSON.parse(response.data.customVariables[i].cropOntologyData), baserowID: response.data.customVariables[i].baserowID });
+                }
+            }
+            console.log(this.customVariables);
             this.loading = false;
 
 
@@ -79,9 +119,15 @@ export default {
             console.error('Error fetching data:', error);
         }
     },
+    computed: {
+        filteredItems() {
+            return this.myCustomVariables.filter(item =>
+                item.observationVariableName.toLowerCase().includes(this.searchQuery.toLowerCase())
+            );
+        },
+    },
     methods: {
         handleRowClick(item) {
-
             this.selectedItem = item;
             this.isModalOpen = true;
         },
@@ -102,6 +148,20 @@ export default {
             } else {
                 return true;
             }
+        },
+        addList(list) {
+            console.log(list.Name);
+            this.chosenLists.push(list);
+            const index = this.myCustomVariables.indexOf(list);
+            console.log(index);
+            if (index !== -1) {
+                this.myCustomVariables.splice(index, 1);
+            }
+            console.log(this.myCustomVariables);
+        },
+        removeList(list) {
+            this.myCustomVariables.push(list);
+            this.chosenLists = this.chosenLists.filter(item => item !== list);
         },
         async generateFieldBookFile() {
 
@@ -209,6 +269,13 @@ export default {
             const response = await axios.get('http://127.0.0.1:5900/brapi/v2/ontologies?pageSize=100');
             items.value = response.data.result.data[0];
             this.isVariablesOpen = true;
+            this.listLoading = true;
+            const response1 = await axios.get('/api/rootly/lists/userCustomVariables');
+            console.log(response1.data);
+            for (let i = 0; i < response1.data.customVariables.length; i++) {
+                this.myCustomVariables.push(JSON.parse(response1.data.customVariables[i]));
+            }
+            this.listLoading = false;
         },
         closeVariable() {
             this.isVariablesOpen = false;
@@ -300,17 +367,78 @@ export default {
                     timeout: 4000
                 });
 
-                let id = list.cropOntologyData.observationVariableDbId;
+                if (list.cropOntologyData.observationVariableDbId) {
+                    let id = list.cropOntologyData.observationVariableDbId;
 
-                const index = this.listInformation.findIndex(item => item.cropOntologyData.observationVariableDbId === id);
-                console.log(index);
-                if (index !== -1) {
-                    this.listInformation.splice(index, 1);
+                    const index = this.listInformation.findIndex(item => item.cropOntologyData.observationVariableDbId === id);
+                    if (index !== -1) {
+                        this.listInformation.splice(index, 1);
+                    }
+                } else {
+                    let name = list.cropOntologyData.observationVariableName;
+
+                    const index = this.customVariables.findIndex(item => item.cropOntologyData.observationVariableName === name);
+                    if (index !== -1) {
+                        this.customVariables.splice(index, 1);
+                    }
                 }
+
             } catch (error) {
                 console.log(error);
             }
+        },
+        async addCustomVariable() {
+            try {
+
+                const response = await axios.post(`http://localhost:3000/rootly/lists/addCustomVariable`, {
+                    listId: this.listId,
+                    listBrowID: this.listBrowID,
+                    listName: this.listName,
+                    userInput: this.inputValue,
+                });
+                console.log(response);
+
+                this.isVariablesOpen = false;
+                toast.success("Variable Added", {
+                    timeout: 4000
+                });
+
+                this.customVariables.push({ cropOntologyData: this.inputValue, baserowID: response.data.baserowID });
+
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async handleNewCustomVariables() {
+            try {
+                const response = await axios.post(`/api/rootly/lists/addMultipleCustomVariables`, {
+                    listId: this.listId,
+                    listBrowID: this.listBrowID,
+                    listName: this.listName,
+                    chosenVariables: this.chosenLists,
+                });
+                console.log(response.data);
+ 
+                this.isVariablesOpen = false;
+                toast.success("Variable Added", {
+                    timeout: 4000
+                });
+
+                for (let i = 0; i < this.chosenLists.length; i++) {
+                    this.customVariables.push({ cropOntologyData: response.data.variables[i].listContentData, baserowID: response.data.variables[i].baserowID });
+                }
+
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        addCategory() {
+            this.inputValue.scale.validValues.categories.push('');
+        },
+        removeCategory(index) {
+            this.inputValue.scale.validValues.categories.splice(index, 1);
         }
+
     },
     name: 'ListView',
 };
@@ -359,6 +487,24 @@ export default {
 
                         </tr>
                     </tbody>
+                    <tbody v-if="this.customVariables.length >= 1">
+                        <tr v-for="(item, index) in customVariables" :key="index"
+                            class="hover:bg-gray-200 transition-all duration-300 border-b border-gray-300 cursor-pointer"
+                            @click="handleRowClick(item)">
+                            <td class="px-4 py-2 text-gray-700">{{ item.cropOntologyData.crop }}</td>
+                            <td class="px-4 py-2 text-gray-700">{{ item.cropOntologyData.institution }}</td>
+                            <td class="px-4 py-2 text-gray-700">{{ item.cropOntologyData.observationVariableName }}</td>
+                            <td class="px-4 py-2 text-gray-700">{{ item.cropOntologyData.trait.traitName }}</td>
+
+                            <td class="px-4 py-2 text-center">
+                                <button @click="handleRemoveClick(item)"
+                                    class="px-4 py-2 bg-red-500 text-white text-xs font-semibold rounded-lg shadow-md hover:bg-red-600 transition duration-300">
+                                    Remove
+                                </button>
+                            </td>
+
+                        </tr>
+                    </tbody>
                 </table>
                 <div v-if="this.isOwner" class="mt-4 flex justify-center">
                     <button @click="handleVariableClick()"
@@ -380,93 +526,358 @@ export default {
                             Close
                         </button>
                     </div>
-                    <div
-                        class="w-full flex rounded-lg my-4 h-[400px] shadow-md overflow-y-auto border border-gray-300 transition-all duration-300">
-                        <div
-                            :class="['transition-all duration-300', selectedTerm ? ('w-1/6') : 'w-1/2', 'bg-gray-100']">
-                            <ul>
-                                <li class="px-4 py-3 bg-gray-300 border font-bold cursor-pointer sticky top-0 z-10">
-                                    Ontology</li>
-                                <li v-for="(item, index) in items" :key="index" @click="selectItem(item)"
-                                    :class="['px-4 py-3 border font-bold cursor-pointer', selectedTerm === item.ontologyName ? 'bg-blue-500 text-white' : '']">
-                                    {{ item.ontologyName }}
-                                </li>
-                            </ul>
+
+                    <div class="my-4 mx-auto max-w-s">
+                        <div class="flex border border-gray-300 rounded-lg overflow-hidden">
+                            <button @click="selectedBar = 1" :class="[
+                                'px-4 py-2 font-bold flex-1',
+                                selectedBar === 1 ? 'bg-blue-500 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'
+                            ]">
+                                Crop Ontology
+                            </button>
+
+                            <div class="border-l border-gray-300"></div>
+
+                            <button @click="selectedBar = 2" :class="[
+                                'px-4 py-2 font-bold flex-1',
+                                selectedBar === 2 ? 'bg-blue-500 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'
+                            ]">
+                                Create Variable
+                            </button>
+
+                            <div class="border-l border-gray-300"></div>
+
+                            <button @click="selectedBar = 3" :class="[
+                                'px-4 py-2 font-bold flex-1',
+                                selectedBar === 3 ? 'bg-blue-500 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'
+                            ]">
+                                Custom Variables
+                            </button>
                         </div>
-
-                        <div :class="['transition-all duration-300', selectedTerm ? 'w-1/3' : 'w-1/4', 'bg-white']">
-                            <ul>
-                                <li class="text py-3 border px-4 bg-gray-300 font-semibold">Term</li>
-                                <li v-for="(ontology, index) in selectedOntology" :key="index"
-                                    @click="selectOntology(ontology)"
-                                    :class="['px-4 py-3 border cursor-pointer', selectedOntologySelected === ontology ? 'bg-blue-500 text-white' : '']">
-                                    {{ ontology }}
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div
-                            :class="['transition-all duration-300', selectedOntology.length ? 'w-1/2' : 'w-1/5', 'bg-gray-50']">
-                            <ul>
-                                <!-- // should make this display Variables instead of traits, but needs API work. -->
-                                <li class="text py-3 border px-4 bg-gray-300 font-semibold">Variables</li>
-                                <div v-if="fetchTermDetails" class="flex justify-center py-4 my-12">
-                                    <img class="h-24" src="../assets/rootlygif.gif" alt="Loading" />
-
-                                </div>
-                                <li v-for="(detail, index) in selectedDetails" :key="index"
-                                    class="px-4 py-3 border cursor-pointer capitalize">
-                                    <input type="checkbox" v-model="selectedTraits" :value="detail" class="mr-5" />
-                                    <div class="inline" @click="selectVariable(detail.observationVariableDbId)">{{
-                                        detail.trait.traitName }}
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div
-                            :class="['transition-all duration-300', selectedOntology.length ? 'w-1/2' : 'w-1/4', 'bg-white']">
-                            <ul>
-                                <li class="text py-3 border px-4 bg-gray-300 font-semibold">Details</li>
-
-                                <div v-if="fetchVariableDetails" class="flex justify-center py-4 my-12">
-                                    <img class="h-24" src="../assets/rootlygif.gif" alt="Loading" />
-
-                                </div>
-                                <li v-for="(detail, index) in selectedVariableDetails" :key="index"
-                                    class="px-4 py-3 border capitalize">
-                                    <div>{{ detail.observationVariableDbId }}</div>
-                                    <div>{{ detail.observationVariableName }}</div>
-
-                                </li>
-                            </ul>
-                        </div>
-
-
                     </div>
 
-                    <h4 class="text-xl font-semibold text-center my-4">Chosen Variables:</h4>
+                    <div v-if="selectedBar === 1">
+                        <div
+                            class="w-full flex rounded-lg my-4 h-[400px] shadow-md overflow-y-auto border border-gray-300 transition-all duration-300">
+                            <div
+                                :class="['transition-all duration-300', selectedTerm ? ('w-1/6') : 'w-1/2', 'bg-gray-100']">
+                                <ul>
+                                    <li class="px-4 py-3 bg-gray-300 border font-bold cursor-pointer sticky top-0 z-10">
+                                        Ontology</li>
+                                    <li v-for="(item, index) in items" :key="index" @click="selectItem(item)"
+                                        :class="['px-4 py-3 border font-bold cursor-pointer', selectedTerm === item.ontologyName ? 'bg-blue-500 text-white' : '']">
+                                        {{ item.ontologyName }}
+                                    </li>
+                                </ul>
+                            </div>
 
-                    <div class="bg-gray-200 p-6 rounded-lg shadow-md mb-6 w-full flex flex-wrap gap-4 justify-start">
+                            <div :class="['transition-all duration-300', selectedTerm ? 'w-1/3' : 'w-1/4', 'bg-white']">
+                                <ul>
+                                    <li class="text py-3 border px-4 bg-gray-300 font-semibold">Term</li>
+                                    <li v-for="(ontology, index) in selectedOntology" :key="index"
+                                        @click="selectOntology(ontology)"
+                                        :class="['px-4 py-3 border cursor-pointer', selectedOntologySelected === ontology ? 'bg-blue-500 text-white' : '']">
+                                        {{ ontology }}
+                                    </li>
+                                </ul>
+                            </div>
 
-                        <div v-for="(trait, index) in selectedTraits" :key="index" class="">
-                            <div class="flex items-center bg-gray-300 p-4 rounded-lg space-x-2">
+                            <div
+                                :class="['transition-all duration-300', selectedOntology.length ? 'w-1/2' : 'w-1/5', 'bg-gray-50']">
+                                <ul>
+                                    <!-- // should make this display Variables instead of traits, but needs API work. -->
+                                    <li class="text py-3 border px-4 bg-gray-300 font-semibold">Variables</li>
+                                    <div v-if="fetchTermDetails" class="flex justify-center py-4 my-12">
+                                        <img class="h-24" src="../assets/rootlygif.gif" alt="Loading" />
 
-                                <span class="text-sm text-gray-900">{{ trait.trait.traitName }}</span>
-                                <button @click="removeItem(trait)" class="text-red-500 hover:text-red-700">
+                                    </div>
+                                    <li v-for="(detail, index) in selectedDetails" :key="index"
+                                        class="px-4 py-3 border cursor-pointer capitalize">
+                                        <input type="checkbox" v-model="selectedTraits" :value="detail" class="mr-5" />
+                                        <div class="inline" @click="selectVariable(detail.observationVariableDbId)">{{
+                                            detail.trait.traitName }}
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div
+                                :class="['transition-all duration-300', selectedOntology.length ? 'w-1/2' : 'w-1/4', 'bg-white']">
+                                <ul>
+                                    <li class="text py-3 border px-4 bg-gray-300 font-semibold">Details</li>
+
+                                    <div v-if="fetchVariableDetails" class="flex justify-center py-4 my-12">
+                                        <img class="h-24" src="../assets/rootlygif.gif" alt="Loading" />
+
+                                    </div>
+                                    <li v-for="(detail, index) in selectedVariableDetails" :key="index"
+                                        class="px-4 py-3 border capitalize">
+                                        <div>{{ detail.observationVariableDbId }}</div>
+                                        <div>{{ detail.observationVariableName }}</div>
+
+                                    </li>
+                                </ul>
+                            </div>
+
+
+                        </div>
+
+                        <h4 class="text-xl font-semibold text-center my-4">Chosen Variables:</h4>
+
+                        <div
+                            class="bg-gray-200 p-6 rounded-lg shadow-md mb-6 w-full flex flex-wrap gap-4 justify-start">
+
+                            <div v-for="(trait, index) in selectedTraits" :key="index" class="">
+                                <div class="flex items-center bg-gray-300 p-4 rounded-lg space-x-2">
+
+                                    <span class="text-sm text-gray-900">{{ trait.trait.traitName }}</span>
+                                    <button @click="removeItem(trait)" class="text-red-500 hover:text-red-700">
+                                        <i class="fas fa-check-circle text-black">X</i>
+                                    </button>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <button @click="handleNewVariable()"
+                            class="text-center my-3 cursor-pointer bg-blue-500 text-white font-semibold p-6 rounded-lg shadow-md mb-6 w-full">
+                            Add Variable
+                        </button>
+                    </div>
+
+                    <div v-if="selectedBar === 2">
+                        <section>
+                            <div class="flex border rounded my-2 w-full">
+                                <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
+                                    Crop
+                                </div>
+                                <div class="w-2/3 p-3 bg-white">
+                                    <input v-model="inputValue.crop" class="w-full p-2 border rounded" />
+                                </div>
+                            </div>
+
+                            <div class="flex border rounded my-2 w-full">
+                                <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
+                                    Variable Name
+                                </div>
+                                <div class="w-2/3 p-3 bg-white">
+                                    <input v-model="inputValue.observationVariableName"
+                                        class="w-full p-2 border rounded" />
+                                </div>
+                            </div>
+
+                            <div class="flex border rounded my-2 w-full">
+                                <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
+                                    Growth Stage
+                                </div>
+                                <div class="w-2/3 p-3 bg-white">
+                                    <input v-model="inputValue.growthStage" class="w-full p-2 border rounded" />
+                                </div>
+                            </div>
+
+                            <h4 class="bg-gray-200 rounded-lg px-2 py-2 text-black text-center">Trait</h4>
+
+                            <div class="flex border rounded my-2 w-full">
+                                <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
+                                    Trait Name
+                                </div>
+                                <div class="w-2/3 p-3 bg-white">
+                                    <input v-model="inputValue.trait.traitName" class="w-full p-2 border rounded" />
+                                </div>
+                            </div>
+
+                            <div class="flex border rounded my-2 w-full">
+                                <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
+                                    Trait Class
+                                </div>
+                                <div class="w-2/3 p-3 bg-white">
+                                    <input v-model="inputValue.trait.traitClass" class="w-full p-2 border rounded" />
+                                </div>
+                            </div>
+
+                            <div class="flex border rounded my-2 w-full">
+                                <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
+                                    Description
+                                </div>
+                                <div class="w-2/3 p-3 bg-white">
+                                    <input v-model="inputValue.trait.description" class="w-full p-2 border rounded" />
+                                </div>
+                            </div>
+
+                            <div class="flex border rounded my-2 w-full">
+                                <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
+                                    Main Abbreviation
+                                </div>
+                                <div class="w-2/3 p-3 bg-white">
+                                    <input v-model="inputValue.trait.mainAbbreviation"
+                                        class="w-full p-2 border rounded" />
+                                </div>
+                            </div>
+
+                            <h4 class="bg-gray-200 rounded-lg px-2 py-2 text-black text-center">Method</h4>
+
+                            <div class="flex border rounded my-2 w-full">
+                                <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
+                                    Method Name
+                                </div>
+                                <div class="w-2/3 p-3 bg-white">
+                                    <input v-model="inputValue.method.methodName" class="w-full p-2 border rounded" />
+                                </div>
+                            </div>
+
+                            <div class="flex border rounded my-2 w-full">
+                                <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
+                                    Method Class
+                                </div>
+                                <div class="w-2/3 p-3 bg-white">
+                                    <input v-model="inputValue.method.methodClass" class="w-full p-2 border rounded" />
+                                </div>
+                            </div>
+
+                            <div class="flex border rounded my-2 w-full">
+                                <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
+                                    Description
+                                </div>
+                                <div class="w-2/3 p-3 bg-white">
+                                    <input v-model="inputValue.method.description" class="w-full p-2 border rounded" />
+                                </div>
+                            </div>
+
+                            <div class="flex border rounded my-2 w-full">
+                                <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
+                                    Formula
+                                </div>
+                                <div class="w-2/3 p-3 bg-white">
+                                    <input v-model="inputValue.method.formula" class="w-full p-2 border rounded" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="bg-gray-200 rounded-lg px-2 py-2 text-black text-center">Scale</h4>
+
+                                <div class="flex border rounded my-2 w-full">
+                                    <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
+                                        Scale Name
+                                    </div>
+                                    <div class="w-2/3 p-3 bg-white">
+                                        <input v-model="inputValue.scale.scaleName" class="w-full p-2 border rounded" />
+                                    </div>
+                                </div>
+
+                                <div class="flex border rounded my-2 w-full">
+                                    <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
+                                        Data Type
+                                    </div>
+                                    <div class="w-2/3 p-3 bg-white">
+                                        <select v-model="inputValue.scale.dataType"
+                                            class="w-full p-2 border rounded cursor-pointer">
+                                            <option value="" disabled>Select Data Type</option>
+                                            <option value="numeric">Numeric</option>
+                                            <option value="categorical">Categorical</option>
+                                            <option value="percent">Percent</option>
+                                            <option value="date">Date</option>
+                                            <option value="boolean">Boolean</option>
+                                            <option value="text">Text</option>
+                                            <option value="photo">Photo</option>
+                                            <option value="counter">Counter</option>
+                                            <option value="multicat">Multicat</option>
+                                            <option value="audio">Audio</option>
+                                            <option value="location">Location</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="flex border rounded my-2 w-full">
+                                    <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
+                                        Categories
+                                    </div>
+                                    <div class="w-2/3 p-3 bg-white">
+                                        <div v-for="(category, index) in inputValue.scale.validValues.categories"
+                                            :key="index" class="flex items-center space-x-2 mb-2">
+                                            <input v-model="inputValue.scale.validValues.categories[index]"
+                                                class="w-full p-2 border rounded" placeholder="Category" />
+                                            <button @click="removeCategory(index)" class="text-red-500 p-1"
+                                                :disabled="inputValue.scale.validValues.categories.length <= 1">
+                                                X
+                                            </button>
+                                        </div>
+
+                                        <button @click="addCategory"
+                                            class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                                            Add Category
+                                        </button>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                        </section>
+                        <button @click="addCustomVariable()"
+                            class="text-center my-3 cursor-pointer bg-blue-500 text-white font-semibold p-6 rounded-lg shadow-md mb-6 w-full">
+                            Add Variable
+                        </button>
+                    </div>
+
+                    <div v-if="selectedBar === 3">
+                        <div class=" rounded-lg shadow-md mb-6 my-4">
+                            <div class="mt-6">
+                                <div class="mt-2 flex items-center border border-gray-300 rounded-md">
+                                    <input v-model="searchQuery" id="add-list" type="text"
+                                        class="p-3 w-full border-none focus:outline-none rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Search for variables to add" />
+                                </div>
+                            </div>
+
+                            <div class="w-full bg-gray-200 p-6 my-4" v-if="listLoading">
+                                <img src="../assets/rootlygif.gif" class="mx-auto h-24" alt="loading" />
+                            </div>
+                            <div v-else>
+                                <div v-if="filteredItems.length < 1">
+                                    <p class="text-gray-600 my-4">No custom variables found...</p>
+                                </div>
+                                <table v-else class="mt-2 w-full table-auto border-collapse border border-gray-300">
+                                    <thead>
+                                        <tr class="bg-gray-100">
+                                            <th class="py-2 px-4 text-left text-gray-700">Variable Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="cursor-pointer" v-for="(item, index) in filteredItems" :key="index"
+                                            @click="addList(item)">
+                                            <td class="py-2 px-4 border-b border-gray-200">{{
+                                                item.observationVariableName }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <h4 class="text-xl font-semibold text-left text-gray-700 my-4">Chosen Lists</h4>
+
+                        <div
+                            class="bg-gray-200 p-6 rounded-lg shadow-md mb-6 w-full flex flex-wrap gap-4 justify-start">
+                            <div v-if="chosenLists.length < 1">
+                                <p class="text-gray-600">No custom variables chosen yet...</p>
+                            </div>
+                            <div v-else class="flex items-center bg-gray-300 p-4 rounded-lg space-x-4"
+                                v-for="(list, index) in chosenLists" :key="index">
+                                <span class="text-sm text-gray-900">{{ list.observationVariableName }}</span>
+                                <button @click="removeList(list)" class="text-red-500 hover:text-red-700">
                                     <i class="fas fa-check-circle text-black">X</i>
                                 </button>
 
                             </div>
-
                         </div>
+
+                        <button @click="handleNewCustomVariables()"
+                            class="text-center my-3 cursor-pointer bg-blue-500 text-white font-semibold p-6 rounded-lg shadow-md mb-6 w-full">
+                            Add Variable
+                        </button>
+
                     </div>
-
-
-                    <button @click="handleNewVariable()"
-                        class="text-center my-3 cursor-pointer bg-blue-500 text-white font-semibold p-6 rounded-lg shadow-md mb-6 w-full">
-                        Add Variable
-                    </button>
 
                 </div>
             </div>
@@ -475,21 +886,14 @@ export default {
                 class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
                 <div class="bg-white p-6  h-[750px]  overflow-y-auto rounded-lg shadow-xl w-1/2">
                     <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-semibold text-gray-800 mb-4">{{ selectedItem.cropOntologyData.trait.traitName }} Details
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">{{
+                            selectedItem.cropOntologyData.trait.traitName }} Details
                         </h2>
                         <button class="px-4 py-2 font-bold bg-red-500 text-white rounded-lg hover:bg-red-600"
                             @click="closeModal">
                             Close
                         </button>
                     </div>
-
-
-                    <!-- 
-                    <p><strong>Crop:</strong> {{ selectedItem.crop }}</p>
-                    <p><strong>Institution:</strong> {{ selectedItem.institution }}</p>
-                    <p><strong>Observation Variable:</strong> {{ selectedItem.observationVariableName }}</p>
-                    <p><strong>Trait Name:</strong> {{ selectedItem.trait.traitName }}</p>
-                    <p><strong>Details:</strong> {{ selectedItem.details }}</p> -->
 
                     <section>
                         <h2>Variable Details</h2>
@@ -515,6 +919,15 @@ export default {
                             </div>
                             <div class="w-2/3 p-3 bg-white">
                                 {{ selectedItem.cropOntologyData.growthStage }}
+                            </div>
+                        </div>
+
+                        <div class="flex border rounded my-2 w-full">
+                            <div class="w-1/3 p-3 bg-gray-100 font-semibold capitalize">
+                                Default Value
+                            </div>
+                            <div class="w-2/3 p-3 bg-white">
+                                {{ selectedItem.cropOntologyData.defaultValue }}
                             </div>
                         </div>
 
@@ -611,17 +1024,11 @@ export default {
                                     Categories
                                 </div>
                                 <div class="w-2/3 p-3 bg-white">
-                                    {{ selectedItem.cropOntologyData.scale.categories }}
+                                    {{ selectedItem.cropOntologyData.scale.validValues.categories }}
                                 </div>
                             </div>
-
-
                         </div>
-
                     </section>
-
-
-
                 </div>
             </div>
 
@@ -631,21 +1038,16 @@ export default {
                 <button @click="generateFieldBookFile"
                     class="bg-gray-400 p-3 text-white font-semibold hover:bg-green-600 transition-300 rounded-lg cursor-pointer">
                     Generate Fieldbook Trait File <img src="../assets/fieldbook.png" class="h-6 inline mx-2" />
-
                 </button>
 
                 <button @click="generateGridscoreTsv"
                     class="bg-gray-800 p-3 text-white font-semibold hover:bg-gray-900 rounded-lg cursor-pointer">
                     Generate Gridscore .tsv <img src="../assets/gridscore.jpeg" class="h-6 inline mx-2" />
-
-
                 </button>
 
                 <button @click="generateGridscoreJSON"
                     class="bg-gray-700 p-3 text-white font-semibold hover:bg-gray-800 rounded-lg cursor-pointer">
                     Generate Gridscore .json<img src="../assets/gridscore.jpeg" class="h-6 inline mx-2" />
-
-
                 </button>
             </div>
 
