@@ -70,7 +70,7 @@ export default {
     },
     methods: {
         handleRowClick(item) {
-            const genLocation = "/lists/" + item.listId;
+            const genLocation = "/lists/" + item.listBaserowId;
             window.location.href = genLocation;
             // this.selectedItem = item;
             // this.isModalOpen = true;

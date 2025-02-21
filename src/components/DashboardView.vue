@@ -43,10 +43,10 @@ export default {
   },
   methods: {
     genLink(listName) {
-      return "/lists/" + listName["List ID"];
+      return "/lists/" + listName["id"];
     },
     genTeamLink(team) {
-      return "/teams/" + team["Team ID"];
+      return "/teams/" + team["id"];
     },
   },
   computed: {
