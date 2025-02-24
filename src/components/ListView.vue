@@ -275,7 +275,7 @@ export default {
         },
         async handleNewVariable() {
             try {
-
+                console.log(this.listBrowID);
                 const response = await apiService.addVariable(this.listId, this.listBrowID, this.listName, this.selectedTraits);
 
                 console.log(response);
@@ -346,6 +346,7 @@ export default {
         },
         async handleRemoveClick(list) {
             try {
+                console.log(list);
                 const response = await apiService.removeVariable(this.listId, this.listBrowID, list.baserowID);
                 console.log(response.data);
                 toast.success("Variable Removed", {

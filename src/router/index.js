@@ -10,6 +10,7 @@ import RedirectView from "@/components/RedirectView.vue";
 import TeamCreation from "@/components/TeamCreation.vue";
 import TeamDetails from "@/components/TeamDetails.vue";
 import NotAuthorized from "@/components/NotAuthorized.vue";
+import apiService from "@/services/apiRoutes";
 
 var user = ref(null);
 
@@ -109,14 +110,9 @@ router.beforeEach(async (to, from, next) => {
 		console.log("Checking access for list " + listId);
 
 		try {
-			const listResponse = await axios.get(
-				`/api/rootly/users/status/${listId}`,
-				{
-					withCredentials: true,
-				}
-			);
+			const listResponse = await apiService.listStatus(listId);
 			console.log("Checking access for list " + listId);
-			console.log(listResponse.data);
+			console.log(listResponse.data); 
 
 			// checks  if the user is either the owner or if the list is shared with them
 			if (!listResponse.data.isOwner && !listResponse.data.isMember) {
@@ -135,13 +131,8 @@ router.beforeEach(async (to, from, next) => {
 		console.log("Checking access for team " + teamId);
 
 		try {
-			const teamResponse = await axios.get(
-				`/api/rootly/teams/status/${teamId}`,
-				{
-					withCredentials: true,
-				}
-			);
-
+			const teamResponse = await apiService.teamStatus(teamId);
+			console.log(teamResponse.data);
 			if (!teamResponse.data.isMember && !teamResponse.data.isOwner) {
 				console.log("User is not authorized to view this team");
 				return next({ path: "/not-authorized" });

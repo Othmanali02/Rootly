@@ -86,6 +86,7 @@ export default {
         },
         async inviteMember() {
             try {
+                console.log(this.teamInfo);
                 const response = await apiService.addMember(this.teamInfo.id, this.invitedEmail, this.teamInfo["User ID"]);
 
 
