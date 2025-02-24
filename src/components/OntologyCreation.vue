@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import { useToast } from 'vue-toast-notification';
+import apiService from '@/services/apiRoutes';
 
 </script>
 
@@ -97,11 +98,7 @@ export default {
       try {
 
         let traits = this.selectedTraits;
-        const response = await axios.post("http://localhost:3000/rootly/lists/createList", {
-          traits: traits,
-          listName: this.listName,
-          userId: this.$props.user.UUID
-        });
+        const response = await apiService.createList(traits, this.listName, this.$props.user.UUID);
         console.log(response.data);
 
         this.selectedDetails = response.data.result;
@@ -114,10 +111,10 @@ export default {
         this.selectedDetails = [];
         this.selectedTraits = [];
         this.selectedVariableDetails = null;
-        let listID = response.data["List ID"];
+        let listBrowID = response.data.id;
 
         localStorage.setItem("listCreated", this.listName);
-        window.location.href = "/lists/" + listID;
+        window.location.href = "/lists/" + listBrowID;
 
 
       } catch (error) {

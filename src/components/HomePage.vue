@@ -1,5 +1,5 @@
 <script setup>
-import axios from 'axios';
+import apiService from '@/services/apiRoutes';
 </script>
 
 <script>
@@ -9,13 +9,14 @@ export default {
   props: ['user'],
   methods: {
     async mounted() {
-      if(this.$props.user === null){
+      if (this.$props.user === null) {
         console.log("user does not exist")
       }
     },
     async handleLogin() {
       try {
-        const response = axios.get("http://localhost:3000/rootly/users/login");
+        const response = await apiService.login();
+
         console.log(response.data);
 
       } catch (error) {
@@ -26,7 +27,8 @@ export default {
     },
     async handleLogout() {
       try {
-        await axios.get("/api/rootly/users/logout");
+        await apiService.logout();
+
         window.location.href = "/";
 
       } catch (error) {

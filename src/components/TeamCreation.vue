@@ -1,6 +1,6 @@
 <script setup>
 import { useToast } from "vue-toastification";
-import axios from "axios";
+import apiService from "@/services/apiRoutes";
 </script>
 
 <script>
@@ -26,9 +26,8 @@ export default {
         try {
             this.listLoading = true;
             console.log("mounted");
-            const response = await axios.post("/api/rootly/lists/getUserLists", {
-                email: this.$props.user.email
-            });
+            const response = await apiService.getUserLists(this.$props.user.email);
+
             this.userLists = response.data;
 
             this.filteredLists = this.userLists;
@@ -74,13 +73,7 @@ export default {
         async createTeam() {
             try {
 
-                const response = await axios.post("http://localhost:3000/rootly/teams/createTeam", {
-                    invitedMembers: this.invitedMembers,
-                    chosenLists: this.chosenLists,
-                    teamName: this.teamName,
-                    description: this.teamDescription,
-                    userId: this.$props.user.UUID
-                });
+                const response = await apiService.createTeam(this.invitedMembers, this.chosenLists, this.teamName, this.teamDescription, this.$props.user.UUID);
 
                 this.teamName = "";
                 this.teamDescription = "";

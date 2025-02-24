@@ -1,5 +1,5 @@
 <script setup>
-import axios from 'axios';
+import apiService from "../services/apiRoutes";
 </script>
 
 <script>
@@ -23,15 +23,14 @@ export default {
       // only that users lists and shared lists
       this.loadingScreen = true;
       // should change this to work with UUID
-      const response = await axios.post(`http://localhost:3000/rootly/lists/getUserLists`, {
-        email: this.$props.user.email
-      });
 
+      const response = await apiService.getUserLists(this.$props.user.email);
+
+
+      console.log(response.data);
       // this is to get the teams 
 
-      const teamresponse = await axios.post(`http://localhost:3000/rootly/teams/getUserTeams`, {
-        userId: this.$props.user.UUID
-      });
+      const teamresponse = await apiService.getUserTeams(this.$props.user.UUID);
 
       this.myTeams = teamresponse.data.teamList;
       this.sharedTeams = teamresponse.data.sharedTeams;
@@ -177,7 +176,7 @@ export default {
             class="flex items-center bg-[#3a5d3f] text-white px-2 py-2 rounded-lg shadow-md text-lg font-semibold transition-all duration-300 transform hover:bg-[#2f4f2f] ml-auto">
             <span><img class="h-6 w-6 invert" src="../assets/sort.png" /></span>
           </a> -->
-       
+
         </div>
 
         <div v-if="this.loadingScreen">

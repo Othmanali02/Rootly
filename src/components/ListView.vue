@@ -1,4 +1,5 @@
 <script setup>
+import apiService from '@/services/apiRoutes';
 import axios from 'axios';
 import { ref } from 'vue';
 import { useToast } from "vue-toastification";
@@ -74,12 +75,7 @@ export default {
     async mounted() {
         try {
             console.log("Mounted");
-            const listStatus = await axios.get(
-                `/api/rootly/users/status/${this.listId}`,
-                {
-                    withCredentials: true,
-                }
-            );
+            const listStatus = await apiService.listStatus(this.listId);
 
             this.isOwner = listStatus.data.isOwner;
             this.isMember = listStatus.data.isMember;
@@ -98,9 +94,9 @@ export default {
 
             this.loading = true;
             console.log(this.$props.user.email);
-            const response = await axios.post(`http://localhost:3000/rootly/lists/getListInfo`, {
-                listId: this.listId
-            });
+
+            const response = await apiService.getListInfo(this.listId);
+
             this.listInformation = response.data.items;
             this.listName = response.data.listName;
             this.listBrowID = response.data.listBrowID;
@@ -242,11 +238,8 @@ export default {
         },
         async inviteMember() {
             try {
-                const response = await axios.patch(`http://localhost:3000/rootly/teams/addMember`, {
-                    teamId: this.teamInfo.id,
-                    memberEmail: this.invitedEmail,
-                    teamMembers: this.teamInfo["User ID"]
-                });
+
+                const response = await apiService.addMember(this.teamInfo.id, this.invitedEmail, this.teamInfo["User ID"]);
 
                 this.teamInfo["User ID"] = response.data.newMembers;
 
@@ -270,7 +263,7 @@ export default {
             items.value = response.data.result.data[0];
             this.isVariablesOpen = true;
             this.listLoading = true;
-            const response1 = await axios.get('/api/rootly/lists/userCustomVariables');
+            const response1 = await apiService.getUserCustomVariables();
             console.log(response1.data);
             for (let i = 0; i < response1.data.customVariables.length; i++) {
                 this.myCustomVariables.push(JSON.parse(response1.data.customVariables[i]));
@@ -283,12 +276,8 @@ export default {
         async handleNewVariable() {
             try {
 
-                const response = await axios.post(`http://localhost:3000/rootly/lists/addVariable`, {
-                    listId: this.listId,
-                    listBrowID: this.listBrowID,
-                    listName: this.listName,
-                    selectedVariables: this.selectedTraits
-                });
+                const response = await apiService.addVariable(this.listId, this.listBrowID, this.listName, this.selectedTraits);
+
                 console.log(response);
 
                 this.isVariablesOpen = false;
@@ -357,11 +346,7 @@ export default {
         },
         async handleRemoveClick(list) {
             try {
-                const response = await axios.post(`http://localhost:3000/rootly/lists/removeVariable`, {
-                    listId: this.listId,
-                    listBrowID: this.listBrowID,
-                    listContentBrowID: list.baserowID
-                });
+                const response = await apiService.removeVariable(this.listId, this.listBrowID, list.baserowID);
                 console.log(response.data);
                 toast.success("Variable Removed", {
                     timeout: 4000
@@ -390,12 +375,7 @@ export default {
         async addCustomVariable() {
             try {
 
-                const response = await axios.post(`http://localhost:3000/rootly/lists/addCustomVariable`, {
-                    listId: this.listId,
-                    listBrowID: this.listBrowID,
-                    listName: this.listName,
-                    userInput: this.inputValue,
-                });
+                const response = await apiService.addCustomVariable(this.listId, this.listBrowID, this.listName, this.inputValue);
                 console.log(response);
 
                 this.isVariablesOpen = false;
@@ -411,14 +391,9 @@ export default {
         },
         async handleNewCustomVariables() {
             try {
-                const response = await axios.post(`/api/rootly/lists/addMultipleCustomVariables`, {
-                    listId: this.listId,
-                    listBrowID: this.listBrowID,
-                    listName: this.listName,
-                    chosenVariables: this.chosenLists,
-                });
+                const response = await apiService.addMultipleCustomVariables(this.listId, this.listBrowID, this.listName, this.chosenLists);
                 console.log(response.data);
- 
+
                 this.isVariablesOpen = false;
                 toast.success("Variable Added", {
                     timeout: 4000

@@ -1,5 +1,5 @@
 <script setup>
-import axios from 'axios';
+import apiService from '@/services/apiRoutes';
 import { useToast } from "vue-toastification";
 
 
@@ -28,17 +28,10 @@ export default {
     },
     async mounted() {
         try {
-            const teamResponse = await axios.get(
-                `/api/rootly/teams/status/${this.teamId}`,
-                {
-                    withCredentials: true,
-                }
-            );
+            const teamResponse = await apiService.teamStatus(this.teamId);
 
             this.isOwner = teamResponse.data.isOwner;
             this.isMember = teamResponse.data.isMember;
-            console.log(this.isOwner);
-            console.log(this.isMember);
 
             if (localStorage.getItem("teamCreated")) {
                 let teamName = localStorage.getItem("teamCreated");
@@ -50,9 +43,7 @@ export default {
             }
 
             this.loading = true;
-            const response = await axios.post(`http://localhost:3000/rootly/teams/getTeamInfo`, {
-                teamId: this.teamId
-            });
+            const response = await apiService.getTeamInfo(this.teamId);
             console.log(response.data);
 
             this.listsInformation = response.data.lists;
@@ -95,11 +86,8 @@ export default {
         },
         async inviteMember() {
             try {
-                const response = await axios.patch(`http://localhost:3000/rootly/teams/addMember`, {
-                    teamId: this.teamInfo.id,
-                    memberEmail: this.invitedEmail,
-                    teamMembers: this.teamInfo["User ID"]
-                });
+                const response = await apiService.addMember(this.teamInfo.id, this.invitedEmail, this.teamInfo["User ID"]);
+
 
                 this.teamInfo["User ID"] = response.data.newMembers;
 
@@ -122,11 +110,7 @@ export default {
             if (confirm(`Are you sure you want to remove ${this.teamMembers[index].Name}?`)) {
                 try {
                     console.log(this.teamMembers);
-                    const response = await axios.patch(`http://localhost:3000/rootly/teams/removeMember`, {
-                        teamId: this.teamInfo.id,
-                        memberID: memberID,
-                        teamMembers: this.teamInfo["User ID"]
-                    });
+                    const response = await apiService.removeMember(this.teamInfo.id, memberID, this.teamInfo["User ID"]);
 
                     this.teamInfo["User ID"] = response.data.newMembers;
 
