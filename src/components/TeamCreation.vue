@@ -83,7 +83,7 @@ export default {
                 this.searchQuery = "";
                 this.chosenLists = [];
                 this.filteredLists = [];
-                let teamID = response.data["Team ID"];
+                let teamID = response.data.id;
 
                 localStorage.setItem("teamCreated", this.teamName);
                 window.location.href = "/teams/" + teamID;
