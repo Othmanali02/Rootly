@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const airtable = false;
-const baseUrl = airtable ? "/api/rootly/airtable" : "/api/rootly";
+const baseUrl = "/api/rootly";
 
 const apiService = {
 	async login() {
