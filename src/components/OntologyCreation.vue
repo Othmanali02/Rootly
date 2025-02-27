@@ -29,11 +29,9 @@ export default {
   },
   async mounted() {
     try {
-      const response = await axios.get('http://127.0.0.1:5900/brapi/v2/ontologies?pageSize=100');
-
-      items.value = response.data.result.data[0];
-
-
+      const response = await axios.get('/api/rootly/cropontology/getOntologies');
+      console.log(response);
+      items.value = response.data.results[0];
 
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -48,6 +46,7 @@ export default {
         this.selectedOntologySelected = null;
         this.selectedDetails = [];
         this.selectedVariableDetails = [];
+
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
@@ -66,7 +65,8 @@ export default {
       this.selectedOntologySelected = ontology;
       this.fetchTermDetails = true;
       try {
-        const response = await axios.get(`http://127.0.0.1:5900/brapi/v2/variables?pageSize=100&ontologyDbId=${this.selectedOntologyDbId}&traitClass=${ontology}`);
+        console.log(this.selectedOntologyDbId);
+        const response = await axios.get(`/api/rootly/cropontology/getVariables?ontologyDbID=${this.selectedOntologyDbId}&traitClass=${ontology}`);
         console.log(response.data.result);
 
         this.selectedDetails = response.data.result;
@@ -81,7 +81,7 @@ export default {
       this.selectedVariableDetails = null;
       this.fetchVariableDetails = true;
       try {
-        const response = await axios.get(`http://127.0.0.1:5900/brapi/v2/variables?pageSize=100&observationVariableDbId=${variable}`);
+        const response = await axios.get(`/api/rootly/cropontology/getVariable?observationVariableDbId=${variable}`);
         console.log(response.data.result);
 
         this.selectedVariableDetails = response.data.result;

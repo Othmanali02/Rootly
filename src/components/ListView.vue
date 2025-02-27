@@ -259,8 +259,9 @@ export default {
 
         },
         async handleVariableClick() {
-            const response = await axios.get('http://127.0.0.1:5900/brapi/v2/ontologies?pageSize=100');
-            items.value = response.data.result.data[0];
+            const response = await axios.get('/api/rootly/cropontology/getOntologies');
+            items.value = response.data.results[0];
+
             this.isVariablesOpen = true;
             this.listLoading = true;
             const response1 = await apiService.getUserCustomVariables();
@@ -317,9 +318,7 @@ export default {
             this.selectedOntologySelected = ontology;
             this.fetchTermDetails = true;
             try {
-                const response = await axios.get(`http://127.0.0.1:5900/brapi/v2/variables?pageSize=100&ontologyDbId=${this.selectedOntologyDbId}&traitClass=${ontology}`);
-                console.log(response.data.result);
-
+                const response = await axios.get(`/api/rootly/cropontology/getVariables?ontologyDbID=${this.selectedOntologyDbId}&traitClass=${ontology}`);
                 this.selectedDetails = response.data.result;
                 this.fetchTermDetails = false;
 
@@ -332,9 +331,8 @@ export default {
             this.selectedVariableDetails = null;
             this.fetchVariableDetails = true;
             try {
-                const response = await axios.get(`http://127.0.0.1:5900/brapi/v2/variables?pageSize=100&observationVariableDbId=${variable}`);
+                const response = await axios.get(`/api/rootly/cropontology/getVariable?observationVariableDbId=${variable}`);
                 console.log(response.data.result);
-
                 this.selectedVariableDetails = response.data.result;
                 this.fetchVariableDetails = false;
 

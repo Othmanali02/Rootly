@@ -11,8 +11,9 @@ onMounted(async () => {
 
     const finalUrl = "/api/rootly/users/redirect?" + queryString;
 
-    try { 
-        const response = await axios.get(finalUrl);
+    try {
+        console.log("making the request");
+        const response = await axios.get(finalUrl, { withCredentials: true });
         console.log(response);
         if (response.status === 200) {
             console.log('Redirecting...');
