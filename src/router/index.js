@@ -92,7 +92,7 @@ router.beforeEach(async (to, from, next) => {
 		} catch (err) {
 			if (err.status === 401) {
 				console.log("login again");
-				window.location.href = "http://localhost:3000/rootly/users/login";
+				window.location.href = "/api/rootly/users/login";
 			} else if (err.status === 400) {
 				console.log("dw about it twin, just login");
 			} else {

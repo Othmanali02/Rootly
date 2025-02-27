@@ -17,15 +17,12 @@ const apiService = {
 		});
 	},
 	async addCustomVariable(listId, listBrowID, listName, inputValue) {
-		return await axios.post(
-			`${baseUrl}/lists/addCustomVariable`,
-			{
-				listId: listId,
-				listBrowID: listBrowID,
-				listName: listName,
-				userInput: inputValue,
-			}
-		);
+		return await axios.post(`${baseUrl}/lists/addCustomVariable`, {
+			listId: listId,
+			listBrowID: listBrowID,
+			listName: listName,
+			userInput: inputValue,
+		});
 	},
 	async addVariable(listId, listBrowID, listName, selectedTraits) {
 		return await axios.post(`${baseUrl}/lists/addVariable`, {
@@ -36,14 +33,11 @@ const apiService = {
 		});
 	},
 	async removeVariable(listId, listBrowID, baserowID) {
-		return await axios.post(
-			`${baseUrl}/lists/removeVariable`,
-			{
-				listId: listId,
-				listBrowID: listBrowID,
-				listContentBrowID: baserowID,
-			}
-		);
+		return await axios.post(`${baseUrl}/lists/removeVariable`, {
+			listId: listId,
+			listBrowID: listBrowID,
+			listContentBrowID: baserowID,
+		});
 	},
 	async addMultipleCustomVariables(listId, listBrowID, listName, chosenLists) {
 		return axios.post(`${baseUrl}/lists/addMultipleCustomVariables`, {
@@ -114,6 +108,25 @@ const apiService = {
 			teamId: teamId,
 			memberID: memberID,
 			teamMembers: teamMembers,
+		});
+	},
+	async removeList(listId, teamId, listBrowID, teamLists) {
+		return axios.patch(`${baseUrl}/teams/removeList`, {
+			teamId: teamId,
+			listId: listId,
+			listBrowID: listBrowID,
+			teamLists: teamLists,
+		});
+	},
+	async addLists(teamId, chosenLists) {
+		return axios.patch(`${baseUrl}/teams/addLists`, {
+			teamId: teamId,
+			chosenLists: chosenLists,
+		});
+	},
+	async removeUserList(listId) {
+		return axios.post(`${baseUrl}/lists/removeUserList`, {
+			listId: listId,
 		});
 	},
 };

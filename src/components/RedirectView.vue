@@ -18,7 +18,8 @@ onMounted(async () => {
         if (response.status === 200) {
             console.log('Redirecting...');
 
-            window.location.href = 'http://localhost:8080';
+            // this should be a property called homepage
+            window.location.href = '/';
         }
     } catch (error) {
         console.error('Error in request:', error);

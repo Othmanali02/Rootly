@@ -1,10 +1,10 @@
 module.exports = {
 	transpileDependencies: true,
 	devServer: {
-		disableHostCheck: true,
+		allowedHosts: "all",
 		proxy: {
 			"/api": {
-				target: "http://backend:3000",
+				target: "http://localhost:3000",
 				changeOrigin: true,
 				secure: false,
 				pathRewrite: {
@@ -14,3 +14,4 @@ module.exports = {
 		},
 	},
 };
+ 

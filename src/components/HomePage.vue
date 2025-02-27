@@ -90,7 +90,7 @@ export default {
 
       <div v-else>
         <div class="flex flex-col sm:flex-row justify-center gap-4 mt-4 mainBtns">
-          <a href="http://localhost:3000/rootly/users/login"
+          <a href="/api/rootly/users/login"
             class="w-full bg-[#384e1d] text-center font-bold text-lg px-6 py-2 text-white rounded-lg transition">
             Login
           </a>

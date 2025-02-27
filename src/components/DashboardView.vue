@@ -1,8 +1,11 @@
 <script setup>
 import apiService from "../services/apiRoutes";
+import { useToast } from "vue-toastification";
 </script>
 
 <script>
+const toast = useToast();
+
 export default {
   props: ['user'],
   data() {
@@ -14,6 +17,7 @@ export default {
       teamSearchQuery: '',
       sharedTeamSearchQuery: '',
       loadingScreen: false,
+      editingItem: null
 
     };
   },
@@ -46,6 +50,35 @@ export default {
     },
     genTeamLink(team) {
       return "/teams/" + team["id"];
+    },
+    startRemove(item) {
+      this.editingItem = item;
+    },
+
+    async handleRemoveClick(list) {
+      try {
+       console.log(list);
+        const response = await apiService.removeUserList(list.id);
+        console.log(response.data);
+        toast.success("List Removed", {
+          timeout: 4000
+        });
+
+        let id = list.id;
+
+        const index = this.lists.findIndex(item => item.id === id);
+        if (index !== -1) {
+          this.lists.splice(index, 1);
+        }
+
+        this.editingItem = null;
+      } catch (error) {
+        toast.success("Oops! Something went wrong.", {
+          timeout: 4000
+        });
+
+        console.log(error);
+      }
     },
   },
   computed: {
@@ -112,6 +145,18 @@ export default {
                 <a :href="genLink(item)" class="w-full">
                   {{ item.Name }}
                 </a>
+
+
+                <span class="ml-4 flex items-center">
+                  <button v-if="editingItem !== item" @click="startRemove(item)"
+                    class="text-gray-600 hover:text-gray-900 transition-all duration-300">
+                    <i class="fas fa-pencil-alt">Edit</i>
+                  </button>
+                  <button v-if="editingItem === item" @click="handleRemoveClick(item)"
+                    class="text-red-500 hover:text-red-700 transition-all duration-300">
+                    Remove
+                  </button>
+                </span>
               </li>
             </ul>
           </div>

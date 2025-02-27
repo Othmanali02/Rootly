@@ -197,8 +197,29 @@ export default {
 
             </div>
             <li v-for="(detail, index) in selectedVariableDetails" :key="index" class="px-4 py-3 border capitalize">
-              <div>{{ detail.observationVariableDbId }}</div>
-              <div>{{ detail.observationVariableName }}</div>
+              <span class="font-bold">Variable</span>
+              <div v-if="detail.observationVariableDbId">{{ detail.observationVariableDbId }}</div>
+              <div v-if="detail.observationVariableName">{{ detail.observationVariableName }}</div>
+              <div v-if="detail.contextOfUse && detail.contextOfUse[0]">{{ detail.contextOfUse[0] }}</div>
+              <hr class="my-3">
+
+              <span class="font-bold">Trait</span>
+              <div v-if="detail.trait && detail.trait.traitName">{{ detail.trait.traitName }}</div>
+              <div v-if="detail.trait && detail.trait.traitClass">{{ detail.trait.traitClass }}</div>
+              <div v-if="detail.trait && detail.trait.description">{{ detail.trait.description }}</div>
+              <hr class="my-3">
+
+              <span class="font-bold">Method</span>
+              <div v-if="detail.method && detail.method.methodName">{{ detail.method.methodName }}</div>
+              <div v-if="detail.method && detail.method.Class">{{ detail.method.Class }}</div>
+              <div v-if="detail.method && detail.method.description">{{ detail.method.description }}</div>
+              <hr class="my-3">
+
+              <span class="font-bold">Scale</span>
+              <div v-if="detail.scale && detail.scale.scaleName">{{ detail.scale.scaleName }}</div>
+              <div v-if="detail.scale && detail.scale.dataType">{{ detail.scale.dataType }}</div>
+              <div v-if="detail.scale && detail.scale.validValues && detail.scale.validValues.categories">{{
+                detail.scale.validValues.categories }}</div>
 
             </li>
           </ul>
