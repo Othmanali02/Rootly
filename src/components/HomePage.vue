@@ -57,12 +57,13 @@ export default {
     </div>
 
     <div class="w-full my-6 max-w-2xl mt-10">
-      <h2 class="text-3xl md:text-4xl font-bold text-black ">Powered By</h2>
-      <div class="flex sm:flex-row justify-center items-center gap-6 my-3 mt-4 poweredBy">
-        <img src="../assets/brapi-logo.svg" alt="BrAPI" />
-        <img src="../assets/cropontology.png" alt="Crop Ontology" />
+      <h2 class="text-3xl md:text-4xl font-bold text-black">Powered By</h2>
+      <div class="flex flex-col sm:flex-row justify-center items-center gap-6 my-3 mt-4 poweredBy">
+        <img src="../assets/brapi-logo.svg" alt="BrAPI" class="w-1/2 sm:w-auto" />
+        <img src="../assets/cropontology.png" alt="Crop Ontology" class="w-1/2 sm:w-auto" />
       </div>
     </div>
+
 
     <div class="w-full my-6 max-w-2xl mt-10">
       <h2 class="text-3xl md:text-4xl font-bold text-black">Get Started</h2>

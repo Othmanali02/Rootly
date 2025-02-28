@@ -33,10 +33,12 @@ export default {
     },
     computed: {
         filteredItems() {
-            return this.userLists.filter(item =>
-                item.Name.toLowerCase().includes(this.searchQuery.toLowerCase())
-            );
-        },
+            return this.userLists.filter(item => {
+                const isInListsInformation = this.listsInformation.some(info => info.listId === item.id || info.listId === item["List ID"]);
+                return item.Name.toLowerCase().includes(this.searchQuery.toLowerCase()) && !isInListsInformation;
+            });
+        }
+
     },
     async mounted() {
         try {
@@ -57,8 +59,9 @@ export default {
             this.loading = true;
             const response = await apiService.getTeamInfo(this.teamId);
             console.log(response.data);
-
             this.listsInformation = response.data.lists;
+            console.log(this.listsInformation);
+
             this.teamInfo = response.data.teamInfo;
 
             this.teamLeader = response.data.owner.Name;
@@ -149,7 +152,7 @@ export default {
                 console.log(this.teamInfo.id);
                 const response = await apiService.removeList(list.listId, this.teamInfo.id, list.baserowID, this.teamInfo.Lists);
                 console.log(response.data);
-                toast.success("Variable Removed", {
+                toast.success("List Removed", {
                     timeout: 4000
                 });
 
@@ -171,6 +174,7 @@ export default {
             const response = await apiService.getUserLists(this.$props.user.email);
             console.log(response.data);
             this.userLists = response.data;
+            console.log(this.userLists);
 
             this.listLoading = false;
         },
@@ -253,7 +257,7 @@ export default {
                             <th class="px-4 py-2 text-gray-600 font-medium">List Name</th>
                             <th class="px-4 py-2 text-gray-600 font-medium">Length</th>
                             <th class="px-4 py-2 text-gray-600 font-medium">Owner</th>
-                            <th class="px-4 py-2 text-gray-600 font-medium">Action</th>
+                            <th v-if="this.isOwner" class="px-4 py-2 text-gray-600 font-medium">Action</th>
                         </tr>
                     </thead>
                     <tbody class="rounded-lg overflow-y-auto">

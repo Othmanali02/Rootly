@@ -43,24 +43,22 @@ export default {
   </nav>
 
   <div v-if="menuStatus" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-    <div class="bg-white p-6  h-[450px]  overflow-y-auto rounded-lg shadow-xl w-1/3">
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">
-          Quick Access
-        </h2>
+    <div class="bg-white p-6 h-[450px] overflow-y-auto rounded-lg shadow-xl w-11/12 sm:w-1/3">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-semibold text-gray-800">Quick Access</h2>
         <button class="px-4 py-2 font-bold bg-red-500 text-white rounded-lg hover:bg-red-600" @click="handleMenuClose">
           Close
         </button>
       </div>
 
-      <ul>
-        <li><a href="/dashboard">Dashboard</a></li>
-        <li><a href="/dashboard">Dashboard</a></li>
-        <li><a href="/dashboard">Dashboard</a></li>
-
+      <ul class="space-y-4 text-center">
+        <li><a href="/dashboard" class="text-blue-600 hover:text-blue-800">Dashboard</a></li>
+        <li><a href="/dashboard" class="text-blue-600 hover:text-blue-800">Dashboard</a></li>
+        <li><a href="/dashboard" class="text-blue-600 hover:text-blue-800">Dashboard</a></li>
       </ul>
     </div>
   </div>
+
 </template>
 
 

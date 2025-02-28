@@ -73,7 +73,7 @@ export default {
 
         this.editingItem = null;
       } catch (error) {
-        toast.success("Oops! Something went wrong.", {
+        toast.error("Oops! Something went wrong.", {
           timeout: 4000
         });
 
