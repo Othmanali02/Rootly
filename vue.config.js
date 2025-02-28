@@ -4,7 +4,7 @@ module.exports = {
 		allowedHosts: "all",
 		proxy: {
 			"/api": {
-				target: "http://localhost:3000",
+				target: process.env.VUE_APP_API_PROXY,
 				changeOrigin: true,
 				secure: false,
 				pathRewrite: {
@@ -14,4 +14,3 @@ module.exports = {
 		},
 	},
 };
- 

@@ -239,15 +239,14 @@ export default {
 <template>
     <div class="min-h-screen flex flex-col items-center justify-start p-6 bg-gray-50">
 
-        <div class="w-full max-w-2xl  text-left dashItems bg-gray-200 p-6 rounded-lg shadow-lg">
-
+        <div class="w-full max-w-2xl text-left dashItems bg-gray-200 p-6 rounded-lg shadow-lg">
 
             <h2 class="text-xl text-left font-semibold text-gray-900 mb-4">{{ this.teamInfo.Name }}</h2>
 
             <h2 class="text-xl text-left font-semibold text-gray-700 mb-4">Team Lists</h2>
 
             <div v-if="loading">
-                <img src="../assets/rootlygif.gif" alt="Loading" class="h-96 mx-auto" />
+                <img src="../assets/rootlygif.gif" alt="Loading" class="h-48 sm:h-64 md:h-96 mx-auto" />
             </div>
 
             <div v-else class="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md">
@@ -292,17 +291,16 @@ export default {
 
             <div v-if="isVariablesOpen"
                 class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-                <div class="bg-white p-6  h-[750px]  overflow-y-auto rounded-lg shadow-xl sm:w-1/2 w-full">
+                <div class="bg-white p-6 h-[750px] overflow-y-auto rounded-lg shadow-xl sm:w-1/2 w-full">
                     <div class="flex items-center justify-between">
-                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Add List
-                        </h2>
+                        <h2 class="text-xl font-semibold text-gray-800 mb-4">Add List</h2>
                         <button class="px-4 py-2 font-bold bg-red-500 text-white rounded-lg hover:bg-red-600"
                             @click="closeVariable">
                             Close
                         </button>
                     </div>
 
-                    <div class=" rounded-lg shadow-md mb-6 my-4">
+                    <div class="rounded-lg shadow-md mb-6 my-4">
                         <div class="mt-6">
                             <div class="mt-2 flex items-center border border-gray-300 rounded-md">
                                 <input v-model="searchQuery" id="add-list" type="text"
@@ -327,8 +325,7 @@ export default {
                                 <tbody>
                                     <tr class="cursor-pointer" v-for="(item, index) in filteredItems" :key="index"
                                         @click="addList(item)">
-                                        <td class="py-2 px-4 border-b border-gray-200">{{
-                                            item.Name }}</td>
+                                        <td class="py-2 px-4 border-b border-gray-200">{{ item.Name }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -347,7 +344,6 @@ export default {
                             <button @click="removeList(list)" class="text-red-500 hover:text-red-700">
                                 <i class="fas fa-check-circle text-black">X</i>
                             </button>
-
                         </div>
                     </div>
 
@@ -393,13 +389,11 @@ export default {
                 </div>
             </div>
 
-
             <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Team Leader</h2>
 
             <div class="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md">
                 <h3>{{ this.teamLeader }}</h3>
             </div>
-
 
             <div v-if="this.isOwner">
                 <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Invite Members</h2>
@@ -408,15 +402,13 @@ export default {
                     <button @click="handleInviteClick"
                         class="bg-blue-500 p-3 text-white font-semibold rounded-lg cursor-pointer">
                         Invite team by email <img class="inline h-5 invert" src="../assets/plus.png" alt="+" />
-
                     </button>
                 </div>
             </div>
 
-
             <div v-if="isInviteOpen"
-                class="fixed inset-0 bg-gray-900 bg-opacity-50 flex  justify-center items-center z-50">
-                <div class="bg-white p-8 h-96 overflow-y-auto rounded-lg shadow-xl  w-1/2">
+                class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+                <div class="bg-white p-8 h-96 overflow-y-auto rounded-lg shadow-xl sm:w-1/2 w-full">
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-xl font-semibold text-gray-800">Invite Workspace Members</h2>
                         <button class="px-4 py-2 font-bold bg-red-500 text-white rounded-lg hover:bg-red-600"
@@ -442,15 +434,33 @@ export default {
                 </div>
             </div>
 
-
         </div>
     </div>
-</template>
 
+</template>
 <style scoped>
 .dashItems {
-    max-width: 60%;
+    max-width: 90%;
     padding: 1.5rem;
+    margin: auto;
+}
+
+@media (max-width: 1024px) {
+    .dashItems {
+        max-width: 80%;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashItems {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 640px) {
+    .dashItems {
+        max-width: 100%;
+    }
 }
 
 table {
@@ -465,9 +475,34 @@ td {
 
 th {
     background-color: #f3f4f6;
+    font-weight: bold;
 }
 
 tr:hover {
     background-color: #f1f5f9;
+}
+
+/* Adjusting buttons and form elements for smaller screens */
+button {
+    padding: 0.75rem 1.5rem;
+}
+
+input[type="text"],
+input[type="email"] {
+    padding: 0.75rem;
+    width: 100%;
+    margin-top: 0.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid #ccc;
+}
+
+@media (max-width: 640px) {
+
+    /* Small screen adjustments for buttons and input fields */
+    button {
+        width: 100%;
+        /* Make buttons full width on small screens */
+        padding: 1rem;
+    }
 }
 </style>

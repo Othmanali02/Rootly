@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from "vue-router";
 import { ref } from "vue";
 import HomePage from "../components/HomePage.vue";
 import axios from "axios";
-import OntologyUpload from "@/components/OntologyUpload.vue";
 import OntologyCreation from "@/components/OntologyCreation.vue";
 import DashboardView from "@/components/DashboardView.vue";
 import ListView from "@/components/ListView.vue";
@@ -21,12 +20,6 @@ const router = createRouter({
 			path: "/",
 			name: "Home",
 			component: HomePage,
-			props: () => ({ user: user.value }),
-		},
-		{
-			path: "/ontologies/upload",
-			name: "Upload",
-			component: OntologyUpload,
 			props: () => ({ user: user.value }),
 		},
 		{
