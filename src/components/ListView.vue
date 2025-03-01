@@ -167,9 +167,15 @@ export default {
                     timeout: 4000
                 });
                 let finalArr = [...this.listInformation];
-                this.customVariables.forEach(variable => {
-                    finalArr.push(variable);
-                });
+
+                console.log(this.customVariables);
+
+                if (this.customVariables.length > 0) {
+                    this.customVariables.forEach(variable => {
+                        finalArr.push(variable);
+                    });
+                }
+
 
                 const response = await axios.post('/api/rootly/lists/create-csv', {
                     listData: finalArr,
@@ -198,9 +204,11 @@ export default {
                 });
 
                 let finalArr = [...this.listInformation];
-                this.customVariables.forEach(variable => {
-                    finalArr.push(variable);
-                });
+                if (this.customVariables.length > 0) {
+                    this.customVariables.forEach(variable => {
+                        finalArr.push(variable);
+                    });
+                }
 
                 const response = await axios.post('/api/rootly/lists/create-tsv-gridscore', {
                     listData: finalArr,
@@ -227,9 +235,11 @@ export default {
                     timeout: 4000
                 });
                 let finalArr = [...this.listInformation];
-                this.customVariables.forEach(variable => {
-                    finalArr.push(variable);
-                });
+                if (this.customVariables.length > 0) {
+                    this.customVariables.forEach(variable => {
+                        finalArr.push(variable);
+                    });
+                }
 
                 const response = await axios.post('/api/rootly/lists/create-json-gridscore', {
                     listData: finalArr,
