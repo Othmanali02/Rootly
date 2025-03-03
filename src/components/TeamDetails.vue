@@ -237,7 +237,7 @@ export default {
 
 
 <template>
-    <div class="min-h-screen flex flex-col items-center justify-start p-6 bg-gray-50">
+    <div class="min-h-screen items-center justify-start p-6 bg-gray-50">
 
         <div class="w-full max-w-2xl text-left dashItems bg-gray-200 p-6 rounded-lg shadow-lg">
 

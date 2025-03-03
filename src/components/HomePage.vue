@@ -48,11 +48,10 @@ export default {
       <h1 class="text-3xl md:text-4xl font-bold text-black">What is Rootly?</h1>
       <p class="mt-2 text-gray-700">
         Rootly is a web application designed to enhance plant breeding research and
-        data management by integrating data import and ontology creation/storage.
+        data management by allowing researchers to create lists of variables and share the lists with their team.
         Motivated by the need to standardize data collection around the shared
         ontology of traits among researchers, Rootly uses the BrAPI standard and
-        the open-source crop ontology framework by offering a lightweight web-app
-        built with Vue.js.
+        the open-source crop ontology database.
       </p>
     </div>
 

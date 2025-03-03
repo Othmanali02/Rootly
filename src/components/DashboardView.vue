@@ -57,7 +57,7 @@ export default {
 
     async handleRemoveClick(list) {
       try {
-       console.log(list);
+        console.log(list);
         const response = await apiService.removeUserList(list.id);
         console.log(response.data);
         toast.success("List Removed", {
@@ -102,15 +102,13 @@ export default {
 }
 </script>
 
-
-
-
 <template>
   <div class="min-h-screen flex flex-col items-center justify-start p-6">
     <div class="w-full my-6 max-w-2xl text-center dashItems">
       <div class="text-center">
         <h1 class="text-xl font-bold text-center my-2">Dashboard</h1>
-        <h2 v-if="this.$props.user" class="text-lg font-semibold text-center">Signed in as, {{ this.$props.user.name }}
+        <h2 v-if="this.$props.user" class="text-lg text-center">Signed in as: <span class="font-semibold">{{
+          this.$props.user.name }}</span>
         </h2>
 
         <a v-else href="/api/login" class="text-blue-600 hover:underline ">Don't have an account? Sign in here</a>

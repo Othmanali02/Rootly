@@ -24,15 +24,17 @@ export default {
       selectedVariableDetails: [],
       fetchTermDetails: false,
       fetchVariableDetails: false,
-      listName: ""
+      listName: "",
+      loading: false,
     };
   },
   async mounted() {
     try {
+      this.loading = true;
       const response = await axios.get('/api/rootly/cropontology/getOntologies');
       console.log(response);
       items.value = response.data.results[0];
-
+      this.loading = false;
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -149,7 +151,12 @@ export default {
     </p>
     <div class="w-full diyTable overflow-y-auto my-6 max-w-3xl">
 
+      <div v-if="loading">
+        <h1 class="text-center text-xl font-semibold my-4">Loading Variable Viewer</h1>
+        <img src="../assets/rootlygif.gif" class="h-96 text-center mx-auto my-auto" alt="Loading" />
+      </div>
       <div
+      v-if="!loading"
         class="w-full flex rounded-lg my-0 shadow-md overflow-hidden border border-gray-300 transition-all duration-300">
         <div :class="['transition-all duration-300', selectedTerm ? ('w-1/6') : 'w-1/2', 'bg-gray-100']">
           <ul>
