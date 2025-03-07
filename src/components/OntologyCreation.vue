@@ -32,8 +32,9 @@ export default {
     try {
       this.loading = true;
       const response = await axios.get('/api/rootly/cropontology/getOntologies');
-      console.log(response);
-      items.value = response.data.results[0];
+      console.log(response.data);
+      items.value = response.data.results;
+      console.log(this.items);
       this.loading = false;
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -49,12 +50,13 @@ export default {
         this.selectedDetails = [];
         this.selectedVariableDetails = [];
 
-
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
+        console.log(item);
+
         this.selectedTerm = item.ontologyName;
         this.selectedOntologyDbId = item.ontologyDbId;
-        this.selectedOntology = item.additional_info.term_names;
+        this.selectedOntology = item.additionalInfo.term_names;
         this.selectedOntologySelected = null;
         this.selectedDetails = [];
         this.selectedVariableDetails = [];
@@ -68,10 +70,12 @@ export default {
       this.fetchTermDetails = true;
       try {
         console.log(this.selectedOntologyDbId);
-        const response = await axios.get(`/api/rootly/cropontology/getVariables?ontologyDbID=${this.selectedOntologyDbId}&traitClass=${ontology}`);
-        console.log(response.data.result);
+        console.log(ontology);
 
-        this.selectedDetails = response.data.result;
+        const { data } = await axios.get(`/api/rootly/cropontology/getVariables?ontologyDbID=${this.selectedOntologyDbId}&traitClass=${ontology}`);
+
+        this.selectedDetails = data.result;
+        console.log(this.selectedDetails);
         this.fetchTermDetails = false;
 
       } catch (error) {
@@ -155,8 +159,7 @@ export default {
         <h1 class="text-center text-xl font-semibold my-4">Loading Variable Viewer</h1>
         <img src="../assets/rootlygif.gif" class="h-96 text-center mx-auto my-auto" alt="Loading" />
       </div>
-      <div
-      v-if="!loading"
+      <div v-if="!loading"
         class="w-full flex rounded-lg my-0 shadow-md overflow-hidden border border-gray-300 transition-all duration-300">
         <div :class="['transition-all duration-300', selectedTerm ? ('w-1/6') : 'w-1/2', 'bg-gray-100']">
           <ul>
@@ -189,7 +192,7 @@ export default {
             <li v-for="(detail, index) in selectedDetails" :key="index"
               class="px-4 py-3 border cursor-pointer capitalize">
               <input type="checkbox" v-model="selectedTraits" :value="detail" class="mr-5" />
-              <div class="inline" @click="selectVariable(detail.observationVariableDbId)">{{ detail.trait.traitName }}
+              <div class="inline" @click="selectVariable(detail.observationVariableDbId)">{{ detail?.trait?.traitName }}
               </div>
             </li>
           </ul>

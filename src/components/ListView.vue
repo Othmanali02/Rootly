@@ -284,7 +284,7 @@ export default {
         },
         async handleVariableClick() {
             const response = await axios.get('/api/rootly/cropontology/getOntologies');
-            items.value = response.data.results[0];
+            items.value = response.data.results;
 
             this.isVariablesOpen = true;
             this.listLoading = true;
@@ -337,7 +337,7 @@ export default {
             } else {
                 this.selectedTerm = item.ontologyName;
                 this.selectedOntologyDbId = item.ontologyDbId;
-                this.selectedOntology = item.additional_info.term_names;
+                this.selectedOntology = item.additionalInfo.term_names;
                 this.selectedOntologySelected = null;
                 this.selectedDetails = [];
                 this.selectedVariableDetails = [];
