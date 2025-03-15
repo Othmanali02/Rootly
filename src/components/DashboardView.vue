@@ -25,6 +25,12 @@ export default {
     try {
       // should send the users credentials with the request so that the backend gets
       // only that users lists and shared lists
+
+      if(!this.$props.user){
+        window.location.href = "/";
+      }
+
+
       this.loadingScreen = true;
       // should change this to work with UUID
 

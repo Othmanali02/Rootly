@@ -26,10 +26,15 @@ export default {
       fetchVariableDetails: false,
       listName: "",
       loading: false,
+      creatingListing: false
     };
   },
   async mounted() {
     try {
+      if (!this.$props.user) {
+        window.location.href = "/";
+      }
+
       this.loading = true;
       const response = await axios.get('/api/rootly/cropontology/getOntologies');
       console.log(response.data);
@@ -103,6 +108,8 @@ export default {
 
       try {
 
+        this.creatingListing = true;
+
         let traits = this.selectedTraits;
         const response = await apiService.createList(traits, this.listName, this.$props.user.UUID);
         console.log(response.data);
@@ -120,6 +127,7 @@ export default {
         let listBrowID = response.data.id;
 
         localStorage.setItem("listCreated", this.listName);
+        this.creatingListing = false;
         window.location.href = "/lists/" + listBrowID;
 
 
@@ -146,13 +154,18 @@ export default {
 
 <template>
   <div class="  flex flex-col items-center justify-start p-6">
-    <h1 class="text-3xl md:text-4xl font-bold text-black w-1/2 text-center">Choose the variables that your are
-      interested in researching</h1>
-    <p class="mt-2 text-gray-700 w-1/2 text-center">
-      Below is an Ontology variable viewer that integrates with cropontology.com, you can get started by choosing an
-      ontology you want to work on and then selecting a specific term for that ontology, and that would display all the
-      variables associated with that term.
-    </p>
+    <div class="flex flex-col items-center text-center px-4 md:px-8 lg:px-16">
+      <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-black max-w-3xl">
+        Ontology Variable Finder
+      </h1>
+      <p class="mt-2 text-gray-700 max-w-3xl text-left">
+        Below is an Ontology variable viewer that integrates with cropontology.com. You can get started by choosing an
+        ontology you want to work on and then selecting a specific term for that ontology. That will display all the
+        variables associated with that term. Then you could click on the checkbox next to the variable to add it to your
+        list!
+      </p>
+    </div>
+
     <div class="w-full diyTable overflow-y-auto my-6 max-w-3xl">
 
       <div v-if="loading">
@@ -261,9 +274,14 @@ export default {
       <input v-model="listName"
         class="mt-2 px-6 py-3 border border-gray-300 bg-gray-100 text-black font-medium rounded w-96 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
         placeholder="Enter list name" />
+
+
       <button @click="createList"
         class="mt-4 px-6 py-3 bg-blue-500 text-white font-semibold rounded w-96 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
         Create List
+        <svg v-if="creatingListing"
+          class="animate-spin inline h-5 w-5 mr-2 border-4 border-white border-t-transparent rounded-full"
+          viewBox="0 0 24 24"></svg>
       </button>
     </div>
 

@@ -28,7 +28,8 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="min-h-screen">
-        redirecting...
+    <div class="h-screen flex flex-col justify-center items-center">
+        <p class="mb-4 text-lg font-semibold">Redirecting...</p>
+        <img src="../assets/rootlygif.gif" class="h-24" />
     </div>
 </template>

@@ -1,4 +1,4 @@
-<script setp>
+<script>
 import "../assets/app.css";
 
 
@@ -31,7 +31,7 @@ export default {
         <a @click="handleMenuOpen" class="text-black cursor-pointer hover:text-gray-400 text-lg">
           <img class="h-8" src="../assets/menuBurger.png" alt=" " />
         </a>
-        <a href="/info" class="text-black hover:text-gray-400 text-lg">
+        <a href="/about" class="text-black hover:text-gray-400 text-lg">
           <img class="h-8" src="../assets/info.png" alt=" " />
         </a>
         <a href="https://github.com/Othmanali02/Rootly" class="text-black hover:text-gray-400 text-lg">
@@ -52,8 +52,6 @@ export default {
       </div>
 
       <ul class="space-y-4 text-center">
-        <li><a href="/dashboard" class="text-blue-600 hover:text-blue-800">Dashboard</a></li>
-        <li><a href="/dashboard" class="text-blue-600 hover:text-blue-800">Dashboard</a></li>
         <li><a href="/dashboard" class="text-blue-600 hover:text-blue-800">Dashboard</a></li>
       </ul>
     </div>

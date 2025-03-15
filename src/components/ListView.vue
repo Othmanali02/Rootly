@@ -1085,7 +1085,7 @@ export default {
             </div>
 
 
-            <div v-if="this.isOwner">
+            <!-- <div v-if="this.isOwner">
                 <h2 class="text-xl text-left font-semibold text-gray-700 mb-4 my-4">Sharing details</h2>
 
                 <div class="overflow-x-auto bg-gray-100 p-4 rounded-lg shadow-md">
@@ -1095,7 +1095,7 @@ export default {
 
                     </button>
                 </div>
-            </div>
+            </div> -->
 
 
             <div v-if="isInviteOpen"

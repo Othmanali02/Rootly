@@ -10,6 +10,7 @@ import TeamCreation from "@/components/TeamCreation.vue";
 import TeamDetails from "@/components/TeamDetails.vue";
 import NotAuthorized from "@/components/NotAuthorized.vue";
 import apiService from "@/services/apiRoutes";
+import AboutView from "@/components/AboutView.vue";
 
 var user = ref(null);
 
@@ -20,6 +21,12 @@ const router = createRouter({
 			path: "/",
 			name: "Home",
 			component: HomePage,
+			props: () => ({ user: user.value }),
+		},
+		{
+			path: "/about",
+			name: "AboutView",
+			component: AboutView,
 			props: () => ({ user: user.value }),
 		},
 		{
@@ -105,7 +112,7 @@ router.beforeEach(async (to, from, next) => {
 		try {
 			const listResponse = await apiService.listStatus(listId);
 			console.log("Checking access for list " + listId);
-			console.log(listResponse.data); 
+			console.log(listResponse.data);
 
 			// checks  if the user is either the owner or if the list is shared with them
 			if (!listResponse.data.isOwner && !listResponse.data.isMember) {

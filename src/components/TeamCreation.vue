@@ -19,11 +19,17 @@ export default {
             searchQuery: "",
             listLoading: false,
             chosenLists: [],
-            filteredLists: []
+            filteredLists: [],
+            creatingTeam: false,
         };
     },
     async mounted() {
         try {
+            if (!this.$props.user) {
+                window.location.href = "/";
+            }
+
+
             this.listLoading = true;
             console.log("mounted");
             const response = await apiService.getUserLists(this.$props.user.email);
@@ -72,7 +78,7 @@ export default {
         },
         async createTeam() {
             try {
-
+                this.creatingTeam = true;
                 const response = await apiService.createTeam(this.invitedMembers, this.chosenLists, this.teamName, this.teamDescription, this.$props.user.UUID);
 
                 this.teamName = "";
@@ -86,6 +92,7 @@ export default {
                 let teamID = response.data.id;
 
                 localStorage.setItem("teamCreated", this.teamName);
+                this.creatingTeam = false;
                 window.location.href = "/teams/" + teamID;
             } catch (error) {
                 toast.error("Encountered an error, try again.", {
@@ -211,6 +218,9 @@ export default {
                 <button @click="createTeam()"
                     class="w-full px-6 py-3 bg-[#384e1d] text-white text-xl font-bold rounded-md focus:outline-none">
                     Create Team
+                    <svg v-if="creatingTeam"
+                        class="animate-spin inline h-5 w-5 mr-2 border-4 border-white border-t-transparent rounded-full"
+                        viewBox="0 0 24 24"></svg>
                 </button>
             </div>
         </div>
