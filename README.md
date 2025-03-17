@@ -10,11 +10,11 @@ Rootly is a collaborative ontology management web application that allows plant 
 
 ## 🌿 Features
 
-- 🌱 **Ontology Management** - Browse and select variables from the CropOntology database.
-- 🏗 **BrAPI Standard** - Ensures seamless interoperability.
-- 🔗 **Team Collaboration** - Share and manage lists within teams.
-- 📱 **Integration Ready** - Supports Fieldbook and Gridscore for data collection.
-- ⚡ **Fast & Responsive** - Built with Vue.js for a smooth user experience.
+- 🌱 **Ontology Management** - Browse and select variables from the CropOntology database
+- 🏗 **BrAPI Standard** - Allows interoperability with other BrAPPs
+- 🔗 **Team Collaboration** - Share and manage lists within teams
+- 📱 **Integration Ready** - Exports to Fieldbook and Gridscore for standardized data collection
+- ⚡ **Fast & Responsive** - Built with Vue.js for a smooth user experience
 
 ---
 
