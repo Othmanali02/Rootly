@@ -4,7 +4,7 @@
 
 [![Vue.js](https://img.shields.io/badge/Vue.js-3.x-green.svg)](https://vuejs.org/)  
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)  
-[![Build](https://img.shields.io/github/actions/workflow/status/your-repo/rootly-frontend/build.yml)](https://github.com/your-repo/rootly-frontend/actions)  
+[![Build](https://img.shields.io/github/actions/workflow/status/Othmanali02/Rootly/build.yml)](https://github.com/Othmanali02/Rootly/actions)
 
 Rootly is a collaborative ontology management web application that allows plant breeders and researchers to create lists of variables directly from the CropOntology database using the BrAPI standard. Users can create teams, share lists within their teams, and integrate lists with apps like Fieldbook and Gridscore for data collection.
 
