@@ -51,14 +51,14 @@ export default {
             </section>
 
             <section class="text-left">
-                <h3 class="text-xl font-semibold text-[#384e1d]">Find the Project on GitHub</h3>
+                <h3 class="text-xl font-semibold text-[#384e1d]">Find the Project on GitLab</h3>
                 <p class="text-gray-600 mt-4">
-                    Check out the GitHub repo for more information, documentation, and to contribute to the project!
+                    Check out the GitLab repo for more information, documentation, and to contribute to the project!
                 </p>
-                <a href="https://github.com/Othmanali02/Rootly" target="_blank"
+                <a href="https://gitlab.com/makaneyyat/rootly" target="_blank"
                     class="mt-4 text-blue-600 font-bold">Frontend Code</a>
                 <br>
-                <a href="https://github.com/Othmanali02/RootlyBackend" target="_blank"
+                <a href="https://gitlab.com/makaneyyat/rootlybackend" target="_blank"
                     class="mt-4 text-blue-600 font-bold">Backend Code</a>
             </section>
         </div>

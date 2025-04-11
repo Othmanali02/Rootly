@@ -51,12 +51,14 @@ export default {
     },
     methods: {
         async inviteMember() {
+
             let message = this.memberEmail + " is added to the team.";
             this.invitedMembers.push(this.memberEmail);
             this.memberEmail = "";
             toast.success(message, {
                 timeout: 4000
             });
+
         },
         removeItem(member) {
             this.invitedMembers = this.invitedMembers.filter(item => item !== member);
@@ -78,6 +80,27 @@ export default {
         },
         async createTeam() {
             try {
+                if (!this.teamName.trim()) {
+                    toast.error("Team name is required.");
+                    return;
+                }
+
+                // if (!this.teamDescription.trim()) {
+                //     toast.error("Team description is required.");
+                //     return;
+                // }
+
+                if (!this.invitedMembers.length) {
+                    toast.error("Please invite at least one member.");
+                    return;
+                }
+
+                if (!this.chosenLists.length) {
+                    toast.error("Please choose at least one list.");
+                    return;
+                }
+
+
                 this.creatingTeam = true;
                 const response = await apiService.createTeam(this.invitedMembers, this.chosenLists, this.teamName, this.teamDescription, this.$props.user.UUID);
 
@@ -143,7 +166,7 @@ export default {
 
             <div class="bg-gray-200 p-6 rounded-lg shadow-md mb-6 w-full flex flex-wrap gap-4 justify-start">
                 <div v-if="invitedMembers.length < 1">
-                    <p class="text-gray-600">No members invited yet... start inviting don't be shy</p>
+                    <p class="text-gray-600">No members invited yet...</p>
                 </div>
                 <div v-else class="flex items-center bg-gray-300 p-4 rounded-lg space-x-4"
                     v-for="(member, index) in invitedMembers" :key="index">
@@ -201,8 +224,7 @@ export default {
 
             <div class="bg-gray-200 p-6 rounded-lg shadow-md mb-6 w-full flex flex-wrap gap-4 justify-start">
                 <div v-if="chosenLists.length < 1">
-                    <p class="text-gray-600">No lists chosen yet... is it the UI? is it ME? Or do you just want to
-                        create an empty team?</p>
+                    <p class="text-gray-600">No lists chosen yet...</p>
                 </div>
                 <div v-else class="flex items-center bg-gray-300 p-4 rounded-lg space-x-4"
                     v-for="(list, index) in chosenLists" :key="index">

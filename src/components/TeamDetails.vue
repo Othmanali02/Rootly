@@ -262,7 +262,7 @@ export default {
                     <tbody class="rounded-lg overflow-y-auto">
                         <tr v-if="listsInformation.length === 0">
                             <td colspan="5" class="px-4 py-2 text-center text-gray-500">
-                                No lists!! you can add one if you want
+                                No lists yet..
                             </td>
                         </tr>
                         <tr v-for="(item, index) in listsInformation" :key="index"
@@ -370,7 +370,7 @@ export default {
                         <tbody>
                             <tr v-if="teamMembers.length === 0">
                                 <td colspan="3" class="px-4 py-2 text-center text-gray-500">
-                                    No Members in this team.. pretty lonely in here ngl
+                                    No Members in this team..
                                 </td>
                             </tr>
 
